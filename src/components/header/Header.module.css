@@ -1,0 +1,92 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 95%;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+}
+
+.nameContainer {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #ffffff;
+  font-family: var(--font-geist-sans);
+  letter-spacing: 0.05em;
+  transform: translateY(100%);
+  margin: 0;
+}
+
+.nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.linkContainer {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.navLink {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 300;
+  font-family: var(--font-geist-sans);
+  position: relative;
+  transform: translateY(100%);
+  margin: 0;
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #ffffff;
+  transition: width 0.3s ease;
+}
+
+.navLink:hover::after {
+  width: 100%;
+}
+
+.navLink:hover {
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .name {
+    font-size: 1.2rem;
+  }
+  
+  .nav {
+    gap: 1.5rem;
+  }
+  
+  .navLink {
+    font-size: 0.9rem;
+  }
+} 

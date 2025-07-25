@@ -1,0 +1,191 @@
+
+
+@font-face {
+  font-family: "db";
+  src: url(/fonts/druk-bold.otf);
+}
+
+@font-face {
+  font-family: "dh";
+  src: url(/fonts/druk-heavy.otf);
+}
+
+@font-face {
+  font-family: "dm";
+  src: url(/fonts/druk-medium.otf);
+}
+
+@font-face {
+  font-family: "ds";
+  src: url(/fonts/druk-super.otf);
+}
+
+.container {
+ width: 100vw;
+ display: flex;
+ flex-direction: column;
+ color: white;
+}
+
+.top{
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  height: 100vh;
+  margin: 0 auto;
+}
+
+.left{
+  width: 45%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: -webkit-fill-available;
+
+}
+
+.right{
+  width: 55%;
+  padding: 0 4vw;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+}
+.titleContainer{
+  width: 100%;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+}
+.contentContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 30vh;
+  margin-bottom: 8vh;
+}
+.projetContainer{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+}
+.projetService{
+  font-size: 1.5vw;
+  font-weight: 600;
+}
+.projetTitle{
+  font-size: 1vw;
+  font-weight: 100;
+}
+.fullDescriptionContainer{
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  width: 90%;
+}
+.title{
+  font-size: 5vw;
+  font-weight: 800;
+  line-height: 1;
+}
+.title span{
+  display: flex;
+  flex-direction: column;
+}
+
+/* Styles pour l'animation overflowHiddenSlideUp */
+.adjetive {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.adjetive span {
+  display: block;
+  transform: translateY(100%); /* Caché par défaut en bas */
+  opacity: 0; /* Invisible par défaut */
+}
+
+/* Styles pour l'animation des éléments du contentContainer */
+.contentContainer p,
+.contentContainer button {
+  transform: translateY(100%); /* Caché par défaut en bas */
+  opacity: 0; /* Invisible par défaut */
+}
+
+/* Styles pour l'animation du fullDescription */
+.fullDescription {
+  transform: translateY(100%); /* Caché par défaut en bas */
+  opacity: 0; /* Invisible par défaut */
+}
+.shortDescription{
+  font-size: 2vw;
+}
+.Description{
+  font-size: 1vw;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+  width: 39%;
+}
+
+.imageContainer{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.link{
+  font-size: 1vw;
+  font-weight: 600;
+  text-decoration: none;
+  color: white;
+}
+
+.projetTitlehiden{
+ opacity: 1;
+}
+
+.texteprojetcontaineur{
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+  overflow: hidden; /* Cache le texte qui dépasse */
+}
+
+.fullDescription{
+  font-size: 2.5vw;
+  width: 66%;
+  text-align: center;
+}
+
+.projetTitlehiden button{
+  background-color: rgb(20, 20, 20);
+  border: none;
+  color: white;
+  font-size: 1vw;
+  font-weight: 600;
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px 5px 10px;
+}

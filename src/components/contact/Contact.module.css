@@ -1,0 +1,169 @@
+.contact {
+  min-height: 100vh;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+}
+.contactContent{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 65vh;
+    width: 100%;
+}
+.contactText{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 50%;
+    justify-content: space-between;
+    font-size: 5rem;
+}
+.contactForm{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    height: 100%;
+    width: 45%;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    width: 100%;
+    max-width: 600px;
+    height: 100%;
+}
+
+.row {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+}
+
+.inputGroup {
+    position: relative;
+    flex: 1;
+}
+
+.input, .textarea {
+    width: 100%;
+    padding: 1rem 0;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid white;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: border-bottom-color 0.3s ease;
+}
+
+.input::placeholder, .textarea::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.input:focus, .textarea:focus {
+    border-bottom-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Styles pour contrer l'autofill du navigateur */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus,
+.input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+    -webkit-text-fill-color: white !important;
+    background-color: transparent !important;
+    background-clip: content-box !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+    -webkit-background-clip: text !important;
+}
+
+/* Styles supplémentaires pour Firefox et autres navigateurs */
+.input:-moz-autofill,
+.input:-moz-autofill:hover,
+.input:-moz-autofill:focus,
+.input:-moz-autofill:active {
+    background-color: transparent !important;
+    color: white !important;
+}
+
+/* Styles pour Edge */
+.input:-ms-input-placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+}
+
+.submitButton {
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 5vw;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+}
+
+.submitButton span {
+    margin: 0;
+    padding: 0;
+    line-height: 0.8;
+    display: block;
+    font-size: 5vw;
+    font-weight: 600;
+}
+
+.submitButton:hover {
+    opacity: 0.8;
+}
+
+.arrow {
+    width: 5vw;
+    height: 5vw;
+    transition: transform 0.3s ease;
+}
+
+.submitButton:hover .arrow {
+    transform: translateX(5px);
+}
+
+.contactInfo {
+    bottom: 2rem;
+    left: 2rem;
+    right: 2rem;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    font-size: 1rem;
+    width: 80%;
+}
+
+.infoSection h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: normal;
+    opacity: 0.8;
+}
+
+.infoSection p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: bold;
+}

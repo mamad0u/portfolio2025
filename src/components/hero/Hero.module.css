@@ -1,0 +1,94 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+.nameContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+}
+
+.textContainer {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-15vh);
+}
+
+.name {
+  font-size: clamp(4rem, 10vw, 8rem);
+  font-weight: 300;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  font-family: var(--font-geist-sans);
+  margin: 0;
+  text-align: center;
+  line-height: 1;
+}
+
+.letter {
+  display: inline-block;
+  transform: translateY(100%);
+}
+
+.subtitleContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.subtitleLineContainer {
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.subtitleText {
+  font-size: 4.5vw;
+  font-weight: 300;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+  font-family: var(--font-geist-sans);
+  margin: 0;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.scrollContainer {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scrollText {
+  font-size: 1rem;
+  font-weight: 300;
+  color: #ffffff;
+  letter-spacing: 0.2em;
+  font-family: var(--font-geist-sans);
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+  transform: translateY(100%);
+} 

@@ -1,0 +1,106 @@
+.projet {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.banderoleContainer {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.banderole {
+  display: flex;
+  white-space: nowrap;
+  gap: 150px;
+  font-size: 50vw;
+  font-weight: bold;
+  color: transparent;
+  -webkit-text-stroke: 1px #ffffff;
+  text-transform: uppercase;
+  line-height: 1;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.banderoleText {
+  display: inline-block;
+}
+
+/* Styles pour les cartes de projets */
+.projectCard {
+  position: absolute;
+  width: 12vw;
+  height: 33vh;
+  min-width: 200px;
+  max-width: 250px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  z-index: 3;
+  opacity: 0;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+/* Positions des cartes */
+.card1 {
+  top: 12%;
+  left: 40%;
+}
+
+.card2 {
+  top: 40%;
+  left: 20%;
+}
+
+.card3 {
+  top: 60%;
+  right: 40%;
+}
+
+.card4 {
+  top: 25%;
+  right: 20%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .projectCard {
+    width: 25vw;
+    height: 30vh;
+  }
+}
+
+/* Image du projet dans la carte */
+.projectImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Tooltip */
+.tooltip {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+} 
