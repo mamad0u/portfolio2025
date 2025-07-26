@@ -29,7 +29,7 @@ const Projet = ({ bgColor }) => {
         },
       ],
       {
-        duration: 2000, // Réduire de 2000ms à 800ms
+        duration: 2000,
         easing: "cubic-bezier(0.9, 0, 0.1, 1)",
         pseudoElement: "::view-transition-new(root)",
       }

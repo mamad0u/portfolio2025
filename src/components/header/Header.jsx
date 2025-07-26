@@ -23,7 +23,7 @@ const Header = ({ shouldAnimate = false }) => {
         },
       ],
       {
-        duration: 1500,
+        duration: 1250,
         easing: "cubic-bezier(0.9, 0, 0.1, 1)",
         pseudoElement: "::view-transition-new(root)",
       }
