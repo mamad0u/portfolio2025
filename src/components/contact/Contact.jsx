@@ -1,49 +1,117 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import styles from './Contact.module.css';
 import Image from 'next/image';
 
-const Contact = () => {
+// Enregistrer ScrollTrigger
+gsap.registerPlugin(ScrollTrigger);
 
+const Contact = () => {
+  const contactRef = useRef(null);
+  const contactInfoRef = useRef(null);
+  const contactFormRef = useRef(null);
+  const formRef = useRef(null);
+  const rowsRef = useRef([]);
+  const inputGroupsRef = useRef([]);
+  const infoSectionsRef = useRef([]);
+  const submitButtonRef = useRef(null);
+
+  useEffect(() => {
+    // Animation des éléments de contact (sauf contactText)
+    const elementsToAnimate = [
+      contactFormRef.current,
+      formRef.current,
+      ...rowsRef.current,
+      ...inputGroupsRef.current,
+      submitButtonRef.current,
+      ...infoSectionsRef.current
+    ].filter(Boolean);
+
+    // Position initiale : cachés en bas
+    gsap.set(elementsToAnimate, {
+      y: "100%"
+    });
+
+    // Animation d'apparition au scroll - chaque élément avec la même durée
+    elementsToAnimate.forEach((element, index) => {
+      gsap.to(element, {
+        y: 0,
+        duration: 1,
+        ease: "power2.out",
+        delay: index * 0.1,
+        scrollTrigger: {
+          trigger: contactRef.current,
+          start: "top 70%",
+          end: "bottom 20%",
+          toggleActions: "play none none reverse"
+        }
+      });
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
+
+  const addToRowsRef = (el) => {
+    if (el && !rowsRef.current.includes(el)) {
+      rowsRef.current.push(el);
+    }
+  };
+
+  const addToInputGroupsRef = (el) => {
+    if (el && !inputGroupsRef.current.includes(el)) {
+      inputGroupsRef.current.push(el);
+    }
+  };
+
+  const addToInfoSectionsRef = (el) => {
+    if (el && !infoSectionsRef.current.includes(el)) {
+      infoSectionsRef.current.push(el);
+    }
+  };
 
   return (
-    <section id="contact" className={`${styles.contact} contact`}>
+    <section ref={contactRef} id="contact" className={`${styles.contact} contact`}>
         <div className={styles.contactContent}>
             <div className={styles.contactText}>
                 <p>Crée un sites web dont les gens se souviendront.</p>
-                <div className={styles.contactInfo}>
-            <div className={styles.infoSection}>
+                <div ref={contactInfoRef} className={styles.contactInfo}>
+            <div ref={addToInfoSectionsRef} className={styles.infoSection}>
                 <h3>CONTACT</h3>
                 <p>HELLO@MAMADOU.STUDIO</p>
             </div>
-            <div className={styles.infoSection}>
+            <div ref={addToInfoSectionsRef} className={styles.infoSection}>
                 <h3>LOCALISATION</h3>
                 <p>BORDEAUX - FRANCE</p>
             </div>
         </div>
             </div>
-            <div className={styles.contactForm}>
-                <form className={styles.form}>
-                    <div className={styles.row}>
-                        <div className={styles.inputGroup}>
+            <div ref={contactFormRef} className={styles.contactForm}>
+                <form ref={formRef} className={styles.form}>
+                    <div ref={addToRowsRef} className={styles.row}>
+                        <div ref={addToInputGroupsRef} className={styles.inputGroup}>
                             <input type="text" placeholder='Nom' className={styles.input} />
                         </div>
-                        <div className={styles.inputGroup}>
+                        <div ref={addToInputGroupsRef} className={styles.inputGroup}>
                             <input type="email" placeholder='Email' className={styles.input} />
                         </div>
                     </div>
-                    <div className={styles.row}>
-                        <div className={styles.inputGroup}>
+                    <div ref={addToRowsRef} className={styles.row}>
+                        <div ref={addToInputGroupsRef} className={styles.inputGroup}>
                             <input type="text" placeholder='Sujet' className={styles.input} />
                         </div>
-                        <div className={styles.inputGroup}>
+                        <div ref={addToInputGroupsRef} className={styles.inputGroup}>
                             <input type="text" placeholder='Téléphone' className={styles.input} />
                         </div>
                     </div>
-                    <div className={styles.inputGroup}>
+                    <div ref={addToInputGroupsRef} className={styles.inputGroup}>
                         <textarea placeholder='Message' className={styles.textarea} rows="5"></textarea>
                     </div>
-                    <button type="submit" className={styles.submitButton}>
+                    <button ref={submitButtonRef} type="submit" className={styles.submitButton}>
                         <span>ENVOYER</span>
                        <Image src="/images/arrow-contact.svg" alt="arrow" width={20} height={20} className={styles.arrow} />
                     </button>

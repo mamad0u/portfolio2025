@@ -165,7 +165,23 @@ const ProjetTemplate = ({ projet }) => {
   imageSrc="/images/blurry/blurry1.webp"
   alt="Image animée"
 />
-
+          <section className={styles.monrole}>
+            <div className={styles.monroleContainer}>
+              <p className={styles.monroleTitle}> MON RÔLE </p>
+              <p className={styles.monroleDescription}> {projet.monrole} </p>
+            </div> 
+          </section>
+          
+          <section className={styles.photoGrid}>
+            <div className={styles.photoGridContainer}>
+              <div className={styles.photoGridItem}>
+                <img src={projet.photo1} alt="Photo 1" />
+              </div>
+              <div className={styles.photoGridItem}>
+                <img src={projet.photo2} alt="Photo 2" />
+              </div>
+            </div>
+          </section>
 
       </div>
       

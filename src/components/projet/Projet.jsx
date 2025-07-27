@@ -29,7 +29,7 @@ const Projet = ({ bgColor }) => {
         },
       ],
       {
-        duration: 2000,
+        duration: 1250,
         easing: "cubic-bezier(0.9, 0, 0.1, 1)",
         pseudoElement: "::view-transition-new(root)",
       }
@@ -146,7 +146,7 @@ const Projet = ({ bgColor }) => {
             tempImg.remove();
           };
         }
-      }, i * 0.4); // Délai plus rapide pour une animation plus dynamique
+      }, i * 0.3); // Délai plus rapide pour une animation plus dynamique
     }
 
     setImageAnimationTimeline(timeline);
@@ -189,18 +189,16 @@ const Projet = ({ bgColor }) => {
     cardRefs.forEach((ref, index) => {
       if (ref.current) {
         if (index === cardIndex) {
-          // Pas de flou sur la carte en hover + scale
+          // Pas de flou sur la carte en hover
           gsap.to(ref.current, {
             filter: 'blur(0px)',
-            scale: 1.05,
             duration: 0.08,
             ease: "linear"
           });
         } else {
-          // Flou sur les autres cartes + scale normal
+          // Flou sur les autres cartes
           gsap.to(ref.current, {
             filter: 'blur(4px)',
-            scale: 1,
             duration: 0.08,
             ease: "linear"
           });
@@ -209,73 +207,73 @@ const Projet = ({ bgColor }) => {
     });
   };
 
-  const handleCardLeave = () => {
-    // Masquer le tooltip
+  const handleCardLeave = (cardIndex) => {
+    // Masquer le tooltip immédiatement
     setTooltipVisible(false);
     setIsHovering(false);
     
-    // Arrêter l'animation de défilement des images
-    stopImageAnimation();
+    // Arrêter immédiatement l'animation de défilement des images
+    if (imageAnimationTimeline) {
+      imageAnimationTimeline.kill();
+      setImageAnimationTimeline(null);
+    }
     
-    // Animation de retour à l'image de base pour toutes les cartes
-    cardRefs.forEach((ref, index) => {
-      if (ref.current) {
-        const cardElement = ref.current;
-        const mainImg = cardElement.querySelector(`.${styles.projectImage}`);
+    // Animation de retour à l'image de base pour la carte quittée seulement
+    if (cardRefs[cardIndex] && cardRefs[cardIndex].current) {
+      const cardElement = cardRefs[cardIndex].current;
+      const mainImg = cardElement.querySelector(`.${styles.projectImage}`);
+      
+      if (mainImg && projets[cardIndex].imagecard) {
+        // Créer une image temporaire pour l'animation de retour
+        const tempImg = document.createElement('img');
+        tempImg.src = projets[cardIndex].imagecard;
+        tempImg.alt = projets[cardIndex].name;
+        tempImg.className = styles.projectImage;
+        tempImg.style.position = 'absolute';
+        tempImg.style.top = '0';
+        tempImg.style.left = '0';
+        tempImg.style.width = '100%';
+        tempImg.style.height = '100%';
+        tempImg.style.objectFit = 'cover';
+        tempImg.style.zIndex = '1';
+        tempImg.style.transform = 'translateY(100%)';
+        tempImg.style.opacity = '0';
         
-        if (mainImg && projets[index].imagecard) {
-          // Créer une image temporaire pour l'animation de retour
-          const tempImg = document.createElement('img');
-          tempImg.src = projets[index].imagecard;
-          tempImg.alt = projets[index].name;
-          tempImg.className = styles.projectImage;
-          tempImg.style.position = 'absolute';
-          tempImg.style.top = '0';
-          tempImg.style.left = '0';
-          tempImg.style.width = '100%';
-          tempImg.style.height = '100%';
-          tempImg.style.objectFit = 'cover';
-          tempImg.style.zIndex = '1';
-          tempImg.style.transform = 'translateY(100%)';
-          tempImg.style.opacity = '0';
-          
-          cardElement.appendChild(tempImg);
-          
-          // Animation de retour à l'image de base
-          tempImg.onload = () => {
-            gsap.to(tempImg, {
-              y: '0%',
-              opacity: 1,
-              duration: 0.5,
-              ease: "power2.out",
-              onComplete: () => {
-                // Remplacer l'image principale par l'image de base
-                mainImg.src = projets[index].imagecard;
-                
-                // Supprimer l'image temporaire
-                setTimeout(() => {
+        cardElement.appendChild(tempImg);
+        
+        // Animation de retour à l'image de base
+        tempImg.onload = () => {
+          gsap.to(tempImg, {
+            y: '0%',
+            opacity: 1,
+            duration: 0.5,
+            ease: "power2.out",
+            onComplete: () => {
+              // Remplacer l'image principale par l'image de base
+              mainImg.src = projets[cardIndex].imagecard;
+              
+              // Supprimer l'image temporaire
+              setTimeout(() => {
+                if (tempImg && tempImg.parentNode) {
                   tempImg.remove();
-                }, 100);
-              }
-            });
-          };
-        }
+                }
+              }, 100);
+            }
+          });
+        };
       }
-    });
+    }
     
-    // Reprendre toutes les animations de lévitation
-    levitationAnimations.forEach((animation, index) => {
-      if (animation) {
-        animation.resume();
-      }
-    });
+    // Reprendre l'animation de lévitation de la carte quittée seulement
+    if (levitationAnimations[cardIndex]) {
+      levitationAnimations[cardIndex].resume();
+    }
     
-    // Retirer le flou de toutes les cartes et remettre le scale normal
+    // Retirer le flou de toutes les cartes
     cardRefs.forEach((ref) => {
       if (ref.current) {
         gsap.to(ref.current, {
           filter: 'blur(0px)',
-          scale: 1,
           duration: 0.08,
           ease: "linear"
         });
@@ -284,74 +282,52 @@ const Projet = ({ bgColor }) => {
   };
 
   useEffect(() => {
-    // Animation des 4 cartes de projets (apparition + translation X)
+    // Animation de lévitation pour les 4 cartes de projets
     cardRefs.forEach((ref, i) => {
       if (ref.current) {
-        // Animation séquentielle : opacité et flou seulement
-      gsap.fromTo(
-          ref.current,
-          { 
-            opacity: 0,
-            filter: 'blur(10px)'
+        // Animation de lévitation avec variations pour chaque carte
+        const variations = [
+          {
+            path: "M 0 -2.5 A 2.5 2.5 0 1 1 0 2.5 A 2.5 2.5 0 1 1 0 -2.5", // Cercle très petit, sens horaire
+            duration: 5,
+            delay: 0
           },
-        {
-            opacity: 1,
-            filter: 'blur(0px)',
-            duration: 0.8,
-          ease: "power3",
-            delay: 0.3 + (i * 0.2), // Animation séquentielle avec plus d'espacement
-          scrollTrigger: {
-            trigger: projetRef.current,
-            start: "top 70%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse"
+          {
+            path: "M 0 -2.7 A 2.7 2.7 0 0 0 0 2.7 A 2.7 2.7 0 0 0 0 -2.7", // Cercle minuscule, sens anti-horaire
+            duration: 4.5,
+            delay: 0.4
+          },
+          {
+            path: "M 0 -3 A 3 3 0 1 1 0 3 A 3 3 0 1 1 0 -3", // Cercle petit, sens horaire
+            duration: 4,
+            delay: 0.8
+          },
+          {
+            path: "M 0 -2 A 2 2 0 0 0 0 2 A 2 2 0 0 0 0 -2", // Cercle très petit, sens anti-horaire
+            duration: 4.3,
+            delay: 1.2
           }
-        }
-      );
-      
-      // Animation de lévitation avec variations pour chaque carte
-      const variations = [
-        {
-          path: "M 0 -2.5 A 2.5 2.5 0 1 1 0 2.5 A 2.5 2.5 0 1 1 0 -2.5", // Cercle très petit, sens horaire
-          duration: 5,
-          delay: 0
-        },
-        {
-          path: "M 0 -2.7 A 2.7 2.7 0 0 0 0 2.7 A 2.7 2.7 0 0 0 0 -2.7", // Cercle minuscule, sens anti-horaire
-          duration: 4.5,
-          delay: 0.4
-        },
-        {
-          path: "M 0 -3 A 3 3 0 1 1 0 3 A 3 3 0 1 1 0 -3", // Cercle petit, sens horaire
-          duration: 4,
-          delay: 0.8
-        },
-        {
-          path: "M 0 -2 A 2 2 0 0 0 0 2 A 2 2 0 0 0 0 -2", // Cercle très petit, sens anti-horaire
-          duration: 4.3,
-          delay: 1.2
-        }
-      ];
+        ];
 
-      const levitationTween = gsap.to(ref.current, {
-        motionPath: {
-          path: variations[i].path,
-          autoRotate: false,
-          alignOrigin: [0.5, 0.5]
-        },
-        duration: variations[i].duration,
-        ease: "none",
-        repeat: -1,
-        delay: variations[i].delay
-      });
+        const levitationTween = gsap.to(ref.current, {
+          motionPath: {
+            path: variations[i].path,
+            autoRotate: false,
+            alignOrigin: [0.5, 0.5]
+          },
+          duration: variations[i].duration,
+          ease: "none",
+          repeat: -1,
+          delay: variations[i].delay
+        });
 
-      // Stocker l'animation pour pouvoir l'arrêter/reprendre
-      setLevitationAnimations(prev => {
-        const newAnimations = [...prev];
-        newAnimations[i] = levitationTween;
-        return newAnimations;
-      });
-    }
+        // Stocker l'animation pour pouvoir l'arrêter/reprendre
+        setLevitationAnimations(prev => {
+          const newAnimations = [...prev];
+          newAnimations[i] = levitationTween;
+          return newAnimations;
+        });
+      }
     });
 
     // Nettoyer ScrollTrigger quand le composant se démonte
@@ -395,7 +371,7 @@ const Projet = ({ bgColor }) => {
           className={`${styles.projectCard} ${styles[`card${index + 1}`]}`}
           onMouseEnter={(e) => handleCardHover(index, e)}
           onMouseMove={handleMouseMove}
-          onMouseLeave={handleCardLeave}
+          onMouseLeave={() => handleCardLeave(index)}
           onClick={handleNavigation(`/projet/${projets[index].slug}`)}
           style={{ cursor: 'pointer' }}
         >

@@ -11,8 +11,8 @@ export const projetsData = [
     imagecard: "/images/blurry/blurry1.webp",
     images: ["/images/blurry/blurry2.webp","/images/blurry/blurry3.webp","/images/blurry/blurry4.webp"],
     github: "https://github.com/votre-username/portfolio",
-    live: "https://votre-portfolio.com"
-    
+    live: "https://votre-portfolio.com",
+    monrole: "My team and I developed a website for a creative studio, taking the project from concept to full implementation. We crafted a unique digital experience that seamlessly blends stunning 3D graphics, smooth animations, and an engaging user journey. Every aspect, from interactive elements to performance optimization, was carefully designed to reflect the studio`s creative identity and vision. The result is a visually striking and technically refined website that enhances the brand`s online presence."
   },
   { 
     slug: "e-commerce", 
