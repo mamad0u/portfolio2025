@@ -2,8 +2,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { ViewTransitions } from "next-view-transitions";
-import TransitionErrorBoundary from "../components/TransitionErrorBoundary";
-
 const geistSans = Geist({ 
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,7 +22,7 @@ export default function RootLayout({ children }) {
     <ViewTransitions>
     <html lang="fr">    
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-          {children}
+           {children}
       </body>
     </html>
     </ViewTransitions>
