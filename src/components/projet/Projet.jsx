@@ -50,11 +50,26 @@ const Projet = ({ bgColor }) => {
       // Réessayer après un court délai
       setTimeout(() => {
         if (isRouterReady) {
-          handleNavigation(path)(e);
+          // Utiliser une fonction anonyme pour éviter la récursion
+          const navigate = (targetPath) => {
+            try {
+              if (transitionRouter && typeof transitionRouter.push === 'function') {
+                transitionRouter.push(targetPath, {
+                  onTransitionReady: triggerPageTransition,
+                });
+              } else {
+                fallbackRouter.push(targetPath);
+              }
+            } catch (error) {
+              console.error('Erreur lors de la navigation:', error);
+              fallbackRouter.push(targetPath);
+            }
+          };
+          navigate(path);
         } else {
           console.error('Router toujours non prêt après délai');
         }
-      }, 50);
+      }, 100);
       return;
     }
 
@@ -93,6 +108,7 @@ const Projet = ({ bgColor }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageAnimationTimeline, setImageAnimationTimeline] = useState(null);
   const [isRouterReady, setIsRouterReady] = useState(false);
+  const [animationsInitialized, setAnimationsInitialized] = useState(false);
 
   // Données des projets
   const projets = getAllProjets();
@@ -192,6 +208,11 @@ const Projet = ({ bgColor }) => {
 
   // Fonction pour gérer le hover sur les cartes
   const handleCardHover = (cardIndex, e) => {
+    // Vérifier que les animations sont initialisées
+    if (!animationsInitialized) {
+      return;
+    }
+    
     // Afficher le tooltip
     setTooltipText(projets[cardIndex].name);
     setTooltipVisible(true);
@@ -238,6 +259,11 @@ const Projet = ({ bgColor }) => {
   };
 
   const handleCardLeave = (cardIndex) => {
+    // Vérifier que les animations sont initialisées
+    if (!animationsInitialized) {
+      return;
+    }
+    
     // Masquer le tooltip immédiatement
     setTooltipVisible(false);
     setIsHovering(false);
@@ -324,64 +350,90 @@ const Projet = ({ bgColor }) => {
 
     // Vérifier à nouveau après un court délai pour s'assurer que le router est initialisé
     const timer = setTimeout(checkRouterReady, 100);
+    
+    // Vérifier une troisième fois après un délai plus long pour s'assurer que tout est bien initialisé
+    const longTimer = setTimeout(checkRouterReady, 500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(longTimer);
+    };
   }, [transitionRouter, fallbackRouter]);
 
   useEffect(() => {
-    // Animation de lévitation pour les 4 cartes de projets
-    cardRefs.forEach((ref, i) => {
-      if (ref.current) {
-        // Animation de lévitation avec variations pour chaque carte
-        const variations = [
-          {
-            path: "M 0 -2.5 A 2.5 2.5 0 1 1 0 2.5 A 2.5 2.5 0 1 1 0 -2.5", // Cercle très petit, sens horaire
-            duration: 5,
-            delay: 0
-          },
-          {
-            path: "M 0 -2.7 A 2.7 2.7 0 0 0 0 2.7 A 2.7 2.7 0 0 0 0 -2.7", // Cercle minuscule, sens anti-horaire
-            duration: 4.5,
-            delay: 0.4
-          },
-          {
-            path: "M 0 -3 A 3 3 0 1 1 0 3 A 3 3 0 1 1 0 -3", // Cercle petit, sens horaire
-            duration: 4,
-            delay: 0.8
-          },
-          {
-            path: "M 0 -2 A 2 2 0 0 0 0 2 A 2 2 0 0 0 0 -2", // Cercle très petit, sens anti-horaire
-            duration: 4.3,
-            delay: 1.2
+    // Attendre que les éléments DOM soient prêts
+    const initializeAnimations = () => {
+      // Animation de lévitation pour les 4 cartes de projets
+      cardRefs.forEach((ref, i) => {
+        if (ref.current) {
+          // Nettoyer les animations existantes
+          if (levitationAnimations[i]) {
+            levitationAnimations[i].kill();
           }
-        ];
+          
+          // Animation de lévitation avec variations pour chaque carte
+          const variations = [
+            {
+              path: "M 0 -2.5 A 2.5 2.5 0 1 1 0 2.5 A 2.5 2.5 0 1 1 0 -2.5", // Cercle très petit, sens horaire
+              duration: 5,
+              delay: 0
+            },
+            {
+              path: "M 0 -2.7 A 2.7 2.7 0 0 0 0 2.7 A 2.7 2.7 0 0 0 0 -2.7", // Cercle minuscule, sens anti-horaire
+              duration: 4.5,
+              delay: 0.4
+            },
+            {
+              path: "M 0 -3 A 3 3 0 1 1 0 3 A 3 3 0 1 1 0 -3", // Cercle petit, sens horaire
+              duration: 4,
+              delay: 0.8
+            },
+            {
+              path: "M 0 -2 A 2 2 0 0 0 0 2 A 2 2 0 0 0 0 -2", // Cercle très petit, sens anti-horaire
+              duration: 4.3,
+              delay: 1.2
+            }
+          ];
 
-        const levitationTween = gsap.to(ref.current, {
-          motionPath: {
-            path: variations[i].path,
-            autoRotate: false,
-            alignOrigin: [0.5, 0.5]
-          },
-          duration: variations[i].duration,
-          ease: "none",
-          repeat: -1,
-          delay: variations[i].delay
-        });
+          const levitationTween = gsap.to(ref.current, {
+            motionPath: {
+              path: variations[i].path,
+              autoRotate: false,
+              alignOrigin: [0.5, 0.5]
+            },
+            duration: variations[i].duration,
+            ease: "none",
+            repeat: -1,
+            delay: variations[i].delay
+          });
 
-        // Stocker l'animation pour pouvoir l'arrêter/reprendre
-        setLevitationAnimations(prev => {
-          const newAnimations = [...prev];
-          newAnimations[i] = levitationTween;
-          return newAnimations;
-        });
-      }
-    });
+          // Stocker l'animation pour pouvoir l'arrêter/reprendre
+          setLevitationAnimations(prev => {
+            const newAnimations = [...prev];
+            newAnimations[i] = levitationTween;
+            return newAnimations;
+          });
+        }
+      });
+      
+      // Marquer les animations comme initialisées
+      setAnimationsInitialized(true);
+    };
 
-    // Nettoyer ScrollTrigger quand le composant se démonte
+    // Attendre un court délai pour s'assurer que le DOM est prêt
+    const timer = setTimeout(initializeAnimations, 50);
+
     return () => {
+      clearTimeout(timer);
+      // Nettoyer les animations existantes
+      levitationAnimations.forEach(animation => {
+        if (animation) {
+          animation.kill();
+        }
+      });
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, [bgColor]);
+  }, [bgColor, levitationAnimations]);
 
   return (
     <section ref={projetRef} id="projects" className={styles.projet}>
@@ -419,7 +471,19 @@ const Projet = ({ bgColor }) => {
           onMouseEnter={(e) => handleCardHover(index, e)}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => handleCardLeave(index)}
-          onClick={handleNavigation(`/projet/${projets[index].slug}`)}
+          onClick={(e) => {
+            // Vérifier que les animations sont initialisées
+            if (!animationsInitialized) {
+              return;
+            }
+            
+            // Arrêter l'animation de défilement avant la navigation
+            if (imageAnimationTimeline) {
+              imageAnimationTimeline.kill();
+              setImageAnimationTimeline(null);
+            }
+            handleNavigation(`/projet/${projets[index].slug}`)(e);
+          }}
           style={{ cursor: 'pointer' }}
         >
           {/* Image du projet */}
