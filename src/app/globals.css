@@ -63,8 +63,7 @@ a {
 
 /* Éviter les flashs lors des transitions */
 main {
-  transition: opacity 0.2s ease-in-out; /* Réduire la durée */
-  will-change: opacity; /* Optimiser les performances */
+  transition: opacity 0.3s ease-in-out;
 }
 
 /* Améliorer la fluidité des animations */
@@ -81,6 +80,8 @@ main {
   display: none !important;
 }
 
+
+
 .revealer {
   position: fixed;
   top: 0;
@@ -90,10 +91,9 @@ main {
   transform-origin: center top;
   pointer-events: none;
   z-index: 2;
-  background-color: #0a0a0a;
+  background-color: #171616;
 }
 
-/* Optimiser les transitions de vue */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none !important;
