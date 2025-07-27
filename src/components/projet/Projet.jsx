@@ -7,7 +7,7 @@ import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { getAllProjets } from '../../data/projets';
 import styles from './Projet.module.css';
 import { useTransitionRouter } from "next-view-transitions";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 
 // Enregistrer les plugins
@@ -15,7 +15,8 @@ gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
 
 const Projet = ({ bgColor }) => {
 
-  const router = useTransitionRouter();
+  const transitionRouter = useTransitionRouter();
+  const fallbackRouter = useRouter();
   const pathname = usePathname();
 
   function triggerPageTransition() {
@@ -37,14 +38,42 @@ const Projet = ({ bgColor }) => {
   }
 
   const handleNavigation = (path) => (e) => {
+    e.preventDefault();
+    
     if (path === pathname) {
-      e.preventDefault();
       return;
     }
 
-    router.push(path, {
-      onTransitionReady: triggerPageTransition,
-    });
+    // Vérifier que le router est prêt
+    if (!isRouterReady) {
+      console.warn('Router non prêt, tentative de navigation différée...');
+      // Réessayer après un court délai
+      setTimeout(() => {
+        if (isRouterReady) {
+          handleNavigation(path)(e);
+        } else {
+          console.error('Router toujours non prêt après délai');
+        }
+      }, 50);
+      return;
+    }
+
+    try {
+      // Essayer d'abord avec le transition router
+      if (transitionRouter && typeof transitionRouter.push === 'function') {
+        transitionRouter.push(path, {
+          onTransitionReady: triggerPageTransition,
+        });
+      } else {
+        // Fallback vers le router standard
+        console.warn('Transition router non disponible, utilisation du router standard');
+        fallbackRouter.push(path);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la navigation:', error);
+      // Fallback vers le router standard en cas d'erreur
+      fallbackRouter.push(path);
+    }
   };
 
   const projetRef = useRef(null);
@@ -63,6 +92,7 @@ const Projet = ({ bgColor }) => {
   const [isHovering, setIsHovering] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageAnimationTimeline, setImageAnimationTimeline] = useState(null);
+  const [isRouterReady, setIsRouterReady] = useState(false);
 
   // Données des projets
   const projets = getAllProjets();
@@ -280,6 +310,23 @@ const Projet = ({ bgColor }) => {
       }
     });
   };
+
+  // Vérifier que le router est prêt
+  useEffect(() => {
+    const checkRouterReady = () => {
+      const isReady = (transitionRouter && typeof transitionRouter.push === 'function') || 
+                     (fallbackRouter && typeof fallbackRouter.push === 'function');
+      setIsRouterReady(isReady);
+    };
+
+    // Vérifier immédiatement
+    checkRouterReady();
+
+    // Vérifier à nouveau après un court délai pour s'assurer que le router est initialisé
+    const timer = setTimeout(checkRouterReady, 100);
+
+    return () => clearTimeout(timer);
+  }, [transitionRouter, fallbackRouter]);
 
   useEffect(() => {
     // Animation de lévitation pour les 4 cartes de projets
