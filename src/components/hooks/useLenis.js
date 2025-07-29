@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -10,16 +10,12 @@ if (typeof window !== 'undefined') {
 
 export const useLenis = () => {
   const lenisRef = useRef(null);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Vérifier si Lenis est déjà initialisé
-    if (lenisRef.current) {
-      return;
-    }
-
     // Initialiser Lenis avec une configuration optimisée
     const lenis = new Lenis({
-      duration: 1.0, // Réduire légèrement
+      duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
@@ -35,11 +31,9 @@ export const useLenis = () => {
     lenis.on('scroll', ScrollTrigger.update);
 
     // Intégrer Lenis dans le ticker GSAP pour une synchronisation parfaite
-    const raf = (time) => {
+    gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
-    };
-    
-    gsap.ticker.add(raf);
+    });
 
     // Désactiver le lag smoothing de GSAP pour éviter les délais
     gsap.ticker.lagSmoothing(0);
@@ -47,15 +41,22 @@ export const useLenis = () => {
     // Stocker l'instance Lenis dans la ref
     lenisRef.current = lenis;
 
+    // Marquer Lenis comme prêt après un court délai
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 50);
+
     // Cleanup function
     return () => {
+      clearTimeout(timer);
       if (lenisRef.current) {
         lenisRef.current.destroy();
-        lenisRef.current = null;
       }
-      gsap.ticker.remove(raf);
+      gsap.ticker.remove((time) => {
+        lenis.raf(time * 1000);
+      });
     };
   }, []);
 
-  return lenisRef.current;
+  return { lenis: lenisRef.current, isReady };
 }; 

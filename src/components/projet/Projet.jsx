@@ -109,6 +109,7 @@ const Projet = ({ bgColor }) => {
   const [imageAnimationTimeline, setImageAnimationTimeline] = useState(null);
   const [isRouterReady, setIsRouterReady] = useState(false);
   const [animationsInitialized, setAnimationsInitialized] = useState(false);
+  const scrollTriggersRef = useRef([]);
 
   // Données des projets
   const projets = getAllProjets();
@@ -431,7 +432,12 @@ const Projet = ({ bgColor }) => {
           animation.kill();
         }
       });
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Nettoyer seulement les ScrollTrigger créés par ce composant
+      scrollTriggersRef.current.forEach(trigger => {
+        if (trigger) {
+          trigger.kill();
+        }
+      });
     };
   }, [bgColor, levitationAnimations]);
 

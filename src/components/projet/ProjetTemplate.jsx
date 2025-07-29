@@ -21,7 +21,7 @@ const ProjetTemplate = ({ projet }) => {
   const fullDescriptionRef = useRef(null);
 
   // Initialiser Lenis pour le scroll smooth
-  useLenis();
+  const { isReady } = useLenis();
 
   useEffect(() => {
     // Animation d'entrée du container (opacité 0 à 1 en 1s)
@@ -187,6 +187,7 @@ const ProjetTemplate = ({ projet }) => {
       
         {/* <Contact /> */}
         <div className="contact" id="contact"></div>
+        <Contact />
       <Footer />
     </>
   );
