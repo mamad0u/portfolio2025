@@ -187,7 +187,6 @@ const ProjetTemplate = ({ projet }) => {
       
         {/* <Contact /> */}
         <div className="contact" id="contact"></div>
-        <Contact />
       <Footer />
     </>
   );
