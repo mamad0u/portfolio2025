@@ -46,7 +46,6 @@ const Projet = ({ bgColor }) => {
 
     // Vérifier que le router est prêt
     if (!isRouterReady) {
-      console.warn('Router non prêt, tentative de navigation différée...');
       // Réessayer après un court délai
       setTimeout(() => {
         if (isRouterReady) {
@@ -61,13 +60,10 @@ const Projet = ({ bgColor }) => {
                 fallbackRouter.push(targetPath);
               }
             } catch (error) {
-              console.error('Erreur lors de la navigation:', error);
               fallbackRouter.push(targetPath);
             }
           };
           navigate(path);
-        } else {
-          console.error('Router toujours non prêt après délai');
         }
       }, 100);
       return;
@@ -77,15 +73,13 @@ const Projet = ({ bgColor }) => {
       // Essayer d'abord avec le transition router
       if (transitionRouter && typeof transitionRouter.push === 'function') {
         transitionRouter.push(path, {
-          onTransitionReady: triggerPageTransition,
-        });
+      onTransitionReady: triggerPageTransition,
+    });
       } else {
         // Fallback vers le router standard
-        console.warn('Transition router non disponible, utilisation du router standard');
         fallbackRouter.push(path);
       }
     } catch (error) {
-      console.error('Erreur lors de la navigation:', error);
       // Fallback vers le router standard en cas d'erreur
       fallbackRouter.push(path);
     }
@@ -113,11 +107,30 @@ const Projet = ({ bgColor }) => {
 
   // Données des projets
   const projets = getAllProjets();
+  
+  // Précharger les images des projets
+  useEffect(() => {
+    const preloadImages = () => {
+      projets.forEach(projet => {
+        if (projet.imagecard) {
+          const img = new Image();
+          img.src = projet.imagecard;
+        }
+        if (projet.images) {
+          projet.images.forEach(imageSrc => {
+            const img = new Image();
+            img.src = imageSrc;
+          });
+        }
+      });
+    };
+    
+    preloadImages();
+  }, [projets]);
 
   // Fonction pour gérer le mouvement de la souris
   const handleMouseMove = (e) => {
     if (isHovering && tooltipRef.current) {
-      console.log('Mouse move - Position:', e.clientX, e.clientY);
       gsap.set(tooltipRef.current, {
         x: e.clientX + 15,
         y: e.clientY - 15
@@ -187,11 +200,10 @@ const Projet = ({ bgColor }) => {
             });
           };
           
-          // Gestion d'erreur si l'image ne se charge pas
-          tempImg.onerror = () => {
-            console.warn(`Image non trouvée: ${projet.images[imageIndex]}`);
-            tempImg.remove();
-          };
+                  // Gestion d'erreur si l'image ne se charge pas
+        tempImg.onerror = () => {
+          tempImg.remove();
+        };
         }
       }, i * 0.3); // Délai plus rapide pour une animation plus dynamique
     }
@@ -210,7 +222,7 @@ const Projet = ({ bgColor }) => {
   // Fonction pour gérer le hover sur les cartes
   const handleCardHover = (cardIndex, e) => {
     // Vérifier que les animations sont initialisées
-    if (!animationsInitialized) {
+    if (!animationsInitialized || !levitationAnimations[cardIndex]) {
       return;
     }
     
@@ -261,7 +273,7 @@ const Projet = ({ bgColor }) => {
 
   const handleCardLeave = (cardIndex) => {
     // Vérifier que les animations sont initialisées
-    if (!animationsInitialized) {
+    if (!animationsInitialized || !levitationAnimations[cardIndex]) {
       return;
     }
     
@@ -364,7 +376,15 @@ const Projet = ({ bgColor }) => {
   useEffect(() => {
     // Attendre que les éléments DOM soient prêts
     const initializeAnimations = () => {
+      // Vérifier que tous les éléments DOM sont prêts
+      const allCardsReady = cardRefs.every(ref => ref.current);
+      if (!allCardsReady) {
+        setTimeout(initializeAnimations, 50);
+        return;
+      }
+      
       // Animation de lévitation pour les 4 cartes de projets
+      const newAnimations = [];
       cardRefs.forEach((ref, i) => {
         if (ref.current) {
           // Nettoyer les animations existantes
@@ -408,21 +428,21 @@ const Projet = ({ bgColor }) => {
             delay: variations[i].delay
           });
 
-          // Stocker l'animation pour pouvoir l'arrêter/reprendre
-          setLevitationAnimations(prev => {
-            const newAnimations = [...prev];
-            newAnimations[i] = levitationTween;
-            return newAnimations;
-          });
+          newAnimations[i] = levitationTween;
         }
       });
+
+      // Mettre à jour les animations en une seule fois
+      setLevitationAnimations(newAnimations);
       
-      // Marquer les animations comme initialisées
-      setAnimationsInitialized(true);
+      // Marquer les animations comme initialisées après un court délai pour s'assurer que tout est prêt
+      setTimeout(() => {
+        setAnimationsInitialized(true);
+      }, 100);
     };
 
     // Attendre un court délai pour s'assurer que le DOM est prêt
-    const timer = setTimeout(initializeAnimations, 50);
+    const timer = setTimeout(initializeAnimations, 100);
 
     return () => {
       clearTimeout(timer);
@@ -439,10 +459,12 @@ const Projet = ({ bgColor }) => {
         }
       });
     };
-  }, [bgColor, levitationAnimations]);
+  }, [bgColor]); // Supprimer levitationAnimations de la dépendance pour éviter les boucles
 
   return (
     <section ref={projetRef} id="projects" className={styles.projet}>
+
+      
       {/* Tooltip - toujours présent dans le DOM */}
       <div 
         ref={tooltipRef} 
@@ -479,7 +501,7 @@ const Projet = ({ bgColor }) => {
           onMouseLeave={() => handleCardLeave(index)}
           onClick={(e) => {
             // Vérifier que les animations sont initialisées
-            if (!animationsInitialized) {
+            if (!animationsInitialized || !levitationAnimations[index]) {
               return;
             }
             

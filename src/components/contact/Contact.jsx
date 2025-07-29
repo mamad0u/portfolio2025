@@ -29,44 +29,44 @@ const Contact = () => {
     if (!isReady) return;
     
     const timer = setTimeout(() => {
-      // Animation des éléments de contact (sauf contactText)
-      const elementsToAnimate = [
-        contactFormRef.current,
-        formRef.current,
-        ...rowsRef.current,
-        ...inputGroupsRef.current,
-        submitButtonRef.current,
-        ...infoSectionsRef.current
-      ].filter(Boolean);
+    // Animation des éléments de contact (sauf contactText)
+    const elementsToAnimate = [
+      contactFormRef.current,
+      formRef.current,
+      ...rowsRef.current,
+      ...inputGroupsRef.current,
+      submitButtonRef.current,
+      ...infoSectionsRef.current
+    ].filter(Boolean);
 
-      // Position initiale : cachés en bas
-      gsap.set(elementsToAnimate, {
-        y: "100%"
-      });
+    // Position initiale : cachés en bas
+    gsap.set(elementsToAnimate, {
+      y: "100%"
+    });
 
-      // Animation d'apparition au scroll - chaque élément avec la même durée
-      elementsToAnimate.forEach((element, index) => {
+    // Animation d'apparition au scroll - chaque élément avec la même durée
+    elementsToAnimate.forEach((element, index) => {
         const trigger = gsap.to(element, {
-          y: 0,
-          duration: 1,
-          ease: "power2.out",
-          delay: index * 0.1,
-          scrollTrigger: {
-            trigger: contactRef.current,
-            start: "top 70%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse"
-          }
-        });
+        y: 0,
+        duration: 1,
+        ease: "power2.out",
+        delay: index * 0.1,
+        scrollTrigger: {
+          trigger: contactRef.current,
+          start: "top 70%",
+          end: "bottom 20%",
+          toggleActions: "play none none reverse"
+        }
+      });
         
         // Stocker la référence du ScrollTrigger
         if (trigger.scrollTrigger) {
           scrollTriggersRef.current.push(trigger.scrollTrigger);
         }
-      });
+    });
     }, 100); // Délai pour s'assurer que Lenis est prêt
 
-        return () => {
+    return () => {
       clearTimeout(timer);
       // Nettoyer seulement les ScrollTrigger créés par ce composant
       scrollTriggersRef.current.forEach(trigger => {

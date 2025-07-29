@@ -20,43 +20,43 @@ const Footer = () => {
     if (!isReady) return;
     
     const timer = setTimeout(() => {
-      // Créer le déclencheur pour détecter quand la section contact est en bas
-      const contactSection = document.querySelector('.contact');
-      
-      if (contactSection && footerRef.current) {
+    // Créer le déclencheur pour détecter quand la section contact est en bas
+    const contactSection = document.querySelector('.contact');
+    
+    if (contactSection && footerRef.current) {
         scrollTriggerRef.current = ScrollTrigger.create({
-          trigger: contactSection,
-          start: "bottom bottom",
-          end: "bottom top",
-          scrub: 1, // Lie l'animation au scroll
-          onUpdate: (self) => {
-            // Calculer la progression (0 à 1)
-            const progress = self.progress;
-            
-            // Animer le bottom de -30vh à 0 en fonction du scroll
-            const newBottom = -30 + (progress * 30 * 1.4); // De -30vh à 0vh
-            
-            gsap.set(footerRef.current, {
-              bottom: `${newBottom}vh`
-            });
-          },
-          onEnter: () => {
-            console.log('Section contact en bas de l\'écran - Animation commencée');
-          },
-          onLeave: () => {
-            console.log('Section contact sort du bas de l\'écran - Animation terminée');
-          },
-          onEnterBack: () => {
-            console.log('Section contact revient en bas de l\'écran');
-          },
-          onLeaveBack: () => {
-            console.log('Section contact sort du haut de l\'écran');
-          }
-        });
-      }
+        trigger: contactSection,
+        start: "bottom bottom",
+        end: "bottom top",
+        scrub: 1, // Lie l'animation au scroll
+        onUpdate: (self) => {
+          // Calculer la progression (0 à 1)
+          const progress = self.progress;
+          
+          // Animer le bottom de -30vh à 0 en fonction du scroll
+          const newBottom = -30 + (progress * 30 * 1.4); // De -30vh à 0vh
+          
+          gsap.set(footerRef.current, {
+            bottom: `${newBottom}vh`
+          });
+        },
+        onEnter: () => {
+          console.log('Section contact en bas de l\'écran - Animation commencée');
+        },
+        onLeave: () => {
+          console.log('Section contact sort du bas de l\'écran - Animation terminée');
+        },
+        onEnterBack: () => {
+          console.log('Section contact revient en bas de l\'écran');
+        },
+        onLeaveBack: () => {
+          console.log('Section contact sort du haut de l\'écran');
+        }
+      });
+    }
     }, 150); // Délai légèrement plus long pour le footer
 
-        return () => {
+    return () => {
       clearTimeout(timer);
       // Nettoyer seulement le ScrollTrigger créé par ce composant
       if (scrollTriggerRef.current) {
