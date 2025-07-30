@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useForm } from 'react-hook-form';
 import styles from './Contact.module.css';
 import Image from 'next/image';
 import { useLenis } from '@/components/hooks/useLenis';
+import { sendEmail } from '@/utils/send-email';
 
 // Enregistrer ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
@@ -21,8 +23,20 @@ const Contact = () => {
   const submitButtonRef = useRef(null);
   const scrollTriggersRef = useRef([]);
   
+  // États pour la gestion du formulaire
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+  
   // Utiliser Lenis pour s'assurer qu'il est prêt
   const { isReady } = useLenis();
+  
+  // Configuration de react-hook-form
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm();
 
   useEffect(() => {
     // Attendre que Lenis soit initialisé
@@ -95,6 +109,27 @@ const Contact = () => {
     }
   };
 
+  // Fonction de soumission du formulaire
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+    
+    try {
+      const result = await sendEmail(data);
+      
+      if (result.success) {
+        setSubmitStatus({ type: 'success', message: result.message });
+        reset(); // Réinitialiser le formulaire
+      } else {
+        setSubmitStatus({ type: 'error', message: result.message });
+      }
+    } catch (error) {
+      setSubmitStatus({ type: 'error', message: 'Erreur lors de l\'envoi' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section ref={contactRef} id="contact" className={`${styles.contact} contact`}>
         <div className={styles.contactContent}>
@@ -112,29 +147,77 @@ const Contact = () => {
         </div>
             </div>
             <div ref={contactFormRef} className={styles.contactForm}>
-                <form ref={formRef} className={styles.form}>
+                <form ref={formRef} className={styles.form} onSubmit={handleSubmit(onSubmit)}>
                     <div ref={addToRowsRef} className={styles.row}>
                         <div ref={addToInputGroupsRef} className={styles.inputGroup}>
-                            <input type="text" placeholder='Nom' className={styles.input} />
+                            <input 
+                                type="text" 
+                                placeholder='Nom' 
+                                className={styles.input}
+                                {...register('name', { required: 'Le nom est requis' })}
+                            />
+                            {errors.name && <span className={styles.error}>{errors.name.message}</span>}
                         </div>
                         <div ref={addToInputGroupsRef} className={styles.inputGroup}>
-                            <input type="email" placeholder='Email' className={styles.input} />
+                            <input 
+                                type="email" 
+                                placeholder='Email' 
+                                className={styles.input}
+                                {...register('email', { 
+                                    required: 'L\'email est requis',
+                                    pattern: {
+                                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                        message: 'Email invalide'
+                                    }
+                                })}
+                            />
+                            {errors.email && <span className={styles.error}>{errors.email.message}</span>}
                         </div>
                     </div>
                     <div ref={addToRowsRef} className={styles.row}>
                         <div ref={addToInputGroupsRef} className={styles.inputGroup}>
-                            <input type="text" placeholder='Sujet' className={styles.input} />
+                            <input 
+                                type="text" 
+                                placeholder='Sujet' 
+                                className={styles.input}
+                                {...register('subject', { required: 'Le sujet est requis' })}
+                            />
+                            {errors.subject && <span className={styles.error}>{errors.subject.message}</span>}
                         </div>
                         <div ref={addToInputGroupsRef} className={styles.inputGroup}>
-                            <input type="text" placeholder='Téléphone' className={styles.input} />
+                            <input 
+                                type="text" 
+                                placeholder='Téléphone' 
+                                className={styles.input}
+                                {...register('phone')}
+                            />
                         </div>
                     </div>
                     <div ref={addToInputGroupsRef} className={styles.inputGroup}>
-                        <textarea placeholder='Message' className={styles.textarea} rows="5"></textarea>
+                        <textarea 
+                            placeholder='Message' 
+                            className={styles.textarea} 
+                            rows="5"
+                            {...register('message', { required: 'Le message est requis' })}
+                        ></textarea>
+                        {errors.message && <span className={styles.error}>{errors.message.message}</span>}
                     </div>
-                    <button ref={submitButtonRef} type="submit" className={styles.submitButton}>
-                        <span>ENVOYER</span>
-                       <Image src="/images/arrow-contact.svg" alt="arrow" width={20} height={20} className={styles.arrow} />
+                    
+                    {/* Message de statut */}
+                    {submitStatus && (
+                        <div className={`${styles.statusMessage} ${styles[submitStatus.type]}`}>
+                            {submitStatus.message}
+                        </div>
+                    )}
+                    
+                    <button 
+                        ref={submitButtonRef} 
+                        type="submit" 
+                        className={styles.submitButton}
+                        disabled={isSubmitting}
+                    >
+                        <span>{isSubmitting ? 'ENVOI...' : 'ENVOYER'}</span>
+                        <Image src="/images/arrow-contact.svg" alt="arrow" width={20} height={20} className={styles.arrow} />
                     </button>
                 </form>
             </div>

@@ -192,4 +192,4 @@ const ProjetTemplate = ({ projet }) => {
   );
 };
 
-export default ProjetTemplate; 
+export default ProjetTemplate;
