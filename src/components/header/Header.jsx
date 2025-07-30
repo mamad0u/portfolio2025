@@ -6,11 +6,13 @@ import styles from './Header.module.css';
 import { useTransitionRouter } from "next-view-transitions";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useLenis } from '@/components/hooks/useLenis';
 
 const Header = ({ shouldAnimate = false }) => {
   
   const router = useTransitionRouter();
   const pathname = usePathname();
+  const { lenis, isReady } = useLenis();
 
   function triggerPageTransition() {
     document.documentElement.animate(
@@ -43,11 +45,21 @@ const Header = ({ shouldAnimate = false }) => {
 
   const handleScrollToSection = (sectionId) => (e) => {
     e.preventDefault();
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
+    
+    // Si on est déjà sur la page d'accueil, faire un scroll direct
+    if (pathname === '/') {
+      const element = document.getElementById(sectionId);
+      if (element && lenis && isReady) {
+        lenis.scrollTo(element, {
+          offset: -100,
+          duration: 1.5,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+        });
+      }
+    } else {
+      // Sinon, utiliser la transition de page pour naviguer vers la section
+      router.push(`/#${sectionId}`, {
+        onTransitionReady: triggerPageTransition,
       });
     }
   };
@@ -78,6 +90,27 @@ const Header = ({ shouldAnimate = false }) => {
     }
   }, [shouldAnimate]);
 
+  // Gérer le scroll vers les sections quand on arrive avec une ancre dans l'URL
+  useEffect(() => {
+    if (pathname === '/' && isReady && lenis) {
+      const hash = window.location.hash;
+      if (hash) {
+        const sectionId = hash.substring(1); // Enlever le #
+        const element = document.getElementById(sectionId);
+        if (element) {
+          // Attendre un peu que la page soit chargée
+          setTimeout(() => {
+            lenis.scrollTo(element, {
+              offset: -100,
+              duration: 1.5,
+              easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+            });
+          }, 500);
+        }
+      }
+    }
+  }, [pathname, isReady, lenis]);
+
   return (
     <header ref={headerRef} className={styles.header}>
       <div className={styles.container}>
@@ -90,10 +123,10 @@ const Header = ({ shouldAnimate = false }) => {
         </div>
         <div className={styles.nav}>
           <div ref={projectsContainerRef} className={styles.linkContainer}>
-            <a ref={projectsRef} onClick={handleScrollToSection('projects')} href="#projects" className={styles.navLink}>Projets</a>
+            <Link ref={projectsRef} onClick={handleScrollToSection('projects')} href="/#projects" className={styles.navLink}>Projets</Link>
           </div>
           <div ref={contactContainerRef} className={styles.linkContainer}>
-            <a ref={contactRef} onClick={handleScrollToSection('contact')} href="#contact" className={styles.navLink}>Contact</a>
+            <Link ref={contactRef} onClick={handleScrollToSection('contact')} href="/#contact" className={styles.navLink}>Contact</Link>
           </div>
         </div>
       </div>
