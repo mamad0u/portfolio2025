@@ -19,6 +19,21 @@ const Projet = ({ bgColor }) => {
   const fallbackRouter = useRouter();
   const pathname = usePathname();
 
+  // État pour détecter si on est sur mobile
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Fonction pour détecter la taille d'écran
+  const checkIsMobile = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
+
+  // Détecter la taille d'écran au montage et lors du redimensionnement
+  useEffect(() => {
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
   function triggerPageTransition() {
     document.documentElement.animate(
       [
@@ -128,8 +143,10 @@ const Projet = ({ bgColor }) => {
     preloadImages();
   }, [projets]);
 
-  // Fonction pour gérer le mouvement de la souris
+  // Fonction pour gérer le mouvement de la souris (desktop uniquement)
   const handleMouseMove = (e) => {
+    if (isMobile) return; // Désactiver sur mobile
+    
     if (isHovering && tooltipRef.current) {
       gsap.set(tooltipRef.current, {
         x: e.clientX + 15,
@@ -138,8 +155,10 @@ const Projet = ({ bgColor }) => {
     }
   };
 
-  // Fonction pour démarrer l'animation de défilement des images
+  // Fonction pour démarrer l'animation de défilement des images (desktop uniquement)
   const startImageAnimation = (cardIndex) => {
+    if (isMobile) return; // Désactiver sur mobile
+    
     const projet = projets[cardIndex];
     if (!projet.images || projet.images.length <= 1) return;
 
@@ -219,8 +238,10 @@ const Projet = ({ bgColor }) => {
     }
   };
 
-  // Fonction pour gérer le hover sur les cartes
+  // Fonction pour gérer le hover sur les cartes (desktop uniquement)
   const handleCardHover = (cardIndex, e) => {
+    if (isMobile) return; // Désactiver sur mobile
+    
     // Vérifier que les animations sont initialisées
     if (!animationsInitialized || !levitationAnimations[cardIndex]) {
       return;
@@ -272,6 +293,8 @@ const Projet = ({ bgColor }) => {
   };
 
   const handleCardLeave = (cardIndex) => {
+    if (isMobile) return; // Désactiver sur mobile
+    
     // Vérifier que les animations sont initialisées
     if (!animationsInitialized || !levitationAnimations[cardIndex]) {
       return;
@@ -374,6 +397,12 @@ const Projet = ({ bgColor }) => {
   }, [transitionRouter, fallbackRouter]);
 
   useEffect(() => {
+    // Ne pas initialiser les animations sur mobile
+    if (isMobile) {
+      setAnimationsInitialized(true);
+      return;
+    }
+
     // Attendre que les éléments DOM soient prêts
     const initializeAnimations = () => {
       // Vérifier que tous les éléments DOM sont prêts
@@ -383,7 +412,7 @@ const Projet = ({ bgColor }) => {
         return;
       }
       
-      // Animation de lévitation pour les 4 cartes de projets
+      // Animation de lévitation pour les 4 cartes de projets (desktop uniquement)
       const newAnimations = [];
       cardRefs.forEach((ref, i) => {
         if (ref.current) {
@@ -459,36 +488,38 @@ const Projet = ({ bgColor }) => {
         }
       });
     };
-  }, [bgColor]); // Supprimer levitationAnimations de la dépendance pour éviter les boucles
+  }, [bgColor, isMobile]); // Ajouter isMobile comme dépendance
 
   return (
     <section ref={projetRef} id="projects" className={styles.projet}>
 
       
-      {/* Tooltip - toujours présent dans le DOM */}
-      <div 
-        ref={tooltipRef} 
-        className={styles.tooltip}
-        style={{
-          position: 'fixed',
-          zIndex: 1000,
-          pointerEvents: 'none',
-          opacity: tooltipVisible ? 1 : 0,
-          visibility: tooltipVisible ? 'visible' : 'hidden',
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          color: 'white',
-          padding: '8px 12px',
-          fontSize: '14px',
-          fontWeight: '500',
-          whiteSpace: 'nowrap',
-          backdropFilter: 'blur(10px)',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-          left: '0px',
-          top: '0px'
-        }}
-      >
-        {tooltipText}
-      </div>
+      {/* Tooltip - toujours présent dans le DOM (desktop uniquement) */}
+      {!isMobile && (
+        <div 
+          ref={tooltipRef} 
+          className={styles.tooltip}
+          style={{
+            position: 'fixed',
+            zIndex: 1000,
+            pointerEvents: 'none',
+            opacity: tooltipVisible ? 1 : 0,
+            visibility: tooltipVisible ? 'visible' : 'hidden',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            color: 'white',
+            padding: '8px 12px',
+            fontSize: '14px',
+            fontWeight: '500',
+            whiteSpace: 'nowrap',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+            left: '0px',
+            top: '0px'
+          }}
+        >
+          {tooltipText}
+        </div>
+      )}
 
       {/* 4 cartes de projets avec animation de transition */}
       {cardRefs.map((ref, index) => (
@@ -496,11 +527,17 @@ const Projet = ({ bgColor }) => {
           key={index} 
           ref={ref} 
           className={`${styles.projectCard} ${styles[`card${index + 1}`]}`}
-          onMouseEnter={(e) => handleCardHover(index, e)}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={() => handleCardLeave(index)}
+          onMouseEnter={isMobile ? undefined : (e) => handleCardHover(index, e)}
+          onMouseMove={isMobile ? undefined : handleMouseMove}
+          onMouseLeave={isMobile ? undefined : () => handleCardLeave(index)}
           onClick={(e) => {
-            // Vérifier que les animations sont initialisées
+            // Sur mobile, pas besoin de vérifier les animations
+            if (isMobile) {
+              handleNavigation(`/projet/${projets[index].slug}`)(e);
+              return;
+            }
+            
+            // Vérifier que les animations sont initialisées (desktop uniquement)
             if (!animationsInitialized || !levitationAnimations[index]) {
               return;
             }

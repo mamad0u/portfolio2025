@@ -2,9 +2,10 @@
 
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './Footer.module.css';
 import { useLenis } from '@/components/hooks/useLenis';
+
 // Enregistrer ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,8 +13,23 @@ const Footer = () => {
   const footerRef = useRef(null);
   const scrollTriggerRef = useRef(null);
   
+  // État pour détecter si on est sur mobile
+  const [isMobile, setIsMobile] = useState(false);
+  
   // Utiliser Lenis pour s'assurer qu'il est prêt
   const { isReady } = useLenis();
+
+  // Fonction pour détecter la taille d'écran
+  const checkIsMobile = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
+
+  // Détecter la taille d'écran au montage et lors du redimensionnement
+  useEffect(() => {
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
 
   useEffect(() => {
     // Attendre que Lenis soit initialisé
@@ -26,7 +42,7 @@ const Footer = () => {
     if (contactSection && footerRef.current) {
         scrollTriggerRef.current = ScrollTrigger.create({
         trigger: contactSection,
-        start: "bottom bottom",
+        start: isMobile ? "bottom 90%" : "bottom bottom", // Ajuster le trigger pour mobile
         end: "bottom top",
         scrub: 1, // Lie l'animation au scroll
         onUpdate: (self) => {
@@ -63,7 +79,7 @@ const Footer = () => {
         scrollTriggerRef.current.kill();
       }
     };
-  }, [isReady]);
+  }, [isReady, isMobile]); // Ajouter isMobile comme dépendance
 
   return (
     <div 

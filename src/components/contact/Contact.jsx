@@ -27,6 +27,9 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
   
+  // État pour détecter si on est sur mobile
+  const [isMobile, setIsMobile] = useState(false);
+  
   // Utiliser Lenis pour s'assurer qu'il est prêt
   const { isReady } = useLenis();
   
@@ -37,6 +40,18 @@ const Contact = () => {
     reset,
     formState: { errors }
   } = useForm();
+
+  // Fonction pour détecter la taille d'écran
+  const checkIsMobile = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
+
+  // Détecter la taille d'écran au montage et lors du redimensionnement
+  useEffect(() => {
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
 
   useEffect(() => {
     // Attendre que Lenis soit initialisé
@@ -67,7 +82,7 @@ const Contact = () => {
         delay: index * 0.1,
         scrollTrigger: {
           trigger: contactRef.current,
-          start: "top 70%",
+          start: isMobile ? "top 80%" : "top 70%", // Ajuster le trigger pour mobile
           end: "bottom 20%",
           toggleActions: "play none none reverse"
         }
@@ -89,7 +104,7 @@ const Contact = () => {
         }
       });
     };
-  }, [isReady]);
+  }, [isReady, isMobile]); // Ajouter isMobile comme dépendance
 
   const addToRowsRef = (el) => {
     if (el && !rowsRef.current.includes(el)) {

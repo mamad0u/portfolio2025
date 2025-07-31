@@ -60,7 +60,7 @@
 }
 
 .subtitleText {
-  font-size: 4.5vw;
+  font-size: 5.5vw; /* Mobile first - taille augmentée pour mobile */
   font-weight: 300;
   color: #ffffff;
   letter-spacing: 0.02em;
@@ -91,4 +91,11 @@
   text-align: center;
   text-transform: uppercase;
   transform: translateY(100%);
+}
+
+/* Desktop - Styles pour écrans larges */
+@media (min-width: 769px) {
+  .subtitleText {
+    font-size: 4.5vw; /* Retour à la taille originale pour desktop */
+  }
 } 

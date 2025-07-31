@@ -20,6 +20,7 @@
   src: url(/fonts/druk-super.otf);
 }
 
+/* Mobile First - Styles de base pour mobile */
 .container {
  width: 100vw;
  display: flex;
@@ -29,69 +30,81 @@
 
 .top{
   display: flex;
+  flex-direction: column-reverse; /* Mobile: layout en colonne inversé */
   align-items: flex-start;
   width: 100%;
-  height: 100vh;
+  height: auto; /* Mobile: hauteur automatique */
   margin: 0 auto;
 }
 
 .left{
-  width: 45%;
-  height: 100%;
+  width: 100%; /* Mobile: 100% de largeur */
+  height: 40vh; /* Mobile: hauteur réduite à 30vh */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: -webkit-fill-available;
-
 }
 
 .right{
-  width: 55%;
-  padding: 0 4vw;
-  height: 100%;
+  width: 100%; /* Mobile: 100% de largeur */
+  padding: 2rem; /* Mobile: padding réduit */
+  height: auto; /* Mobile: hauteur automatique */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
 }
+
 .titleContainer{
   width: 100%;
-  height: 60vh;
+  height: auto; /* Mobile: hauteur automatique */
   display: flex;
   align-items: center;
+  padding: 2rem 0; /* Mobile: padding vertical */
 }
+
 .contentContainer{
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  height: 30vh;
-  margin-bottom: 8vh;
+  height: auto; /* Mobile: hauteur automatique */
+  margin-bottom: 2rem; /* Mobile: margin réduit */
+  gap: 2rem; /* Mobile: espacement entre éléments */
 }
+
 .projetContainer{
   display: flex;
+  flex-direction: column; /* Mobile: layout en colonne */
   justify-content: space-between;
-  align-items: center;
-  width: 90%;
+  align-items: flex-start; /* Mobile: alignement à gauche */
+  width: 100%; /* Mobile: 100% de largeur */
+  gap: 1rem; /* Mobile: espacement entre éléments */
 }
+
 .projetService{
-  font-size: 1.5vw;
+  font-size: 1.2rem; /* Mobile: taille fixe */
   font-weight: 600;
 }
+
 .projetTitle{
-  font-size: 1vw;
+  font-size: 0.9rem; /* Mobile: taille fixe */
   font-weight: 100;
 }
+
 .fullDescriptionContainer{
   display: flex;
+  flex-direction: column; /* Mobile: layout en colonne */
   justify-content: space-between;
-  align-items: end;
-  width: 90%;
+  align-items: flex-start; /* Mobile: alignement à gauche */
+  width: 100%; /* Mobile: 100% de largeur */
+  gap: 1rem; /* Mobile: espacement entre éléments */
 }
+
 .title{
-  font-size: 5vw;
+  font-size: 3rem; /* Mobile: taille fixe */
   font-weight: 800;
   line-height: 1;
 }
+
 .title span{
   display: flex;
   flex-direction: column;
@@ -122,15 +135,17 @@
   transform: translateY(100%); /* Caché par défaut en bas */
   opacity: 0; /* Invisible par défaut */
 }
+
 .shortDescription{
-  font-size: 2vw;
+  font-size: 1.5rem; /* Mobile: taille fixe */
 }
+
 .Description{
-  font-size: 1vw;
+  font-size: 0.9rem; /* Mobile: taille fixe */
   line-height: 1.2;
   letter-spacing: 0.02em;
   font-weight: 400;
-  width: 39%;
+  width: 100%; /* Mobile: 100% de largeur */
 }
 
 .imageContainer{
@@ -148,7 +163,7 @@
 }
 
 .link{
-  font-size: 1vw;
+  font-size: 0.9rem; /* Mobile: taille fixe */
   font-weight: 600;
   text-decoration: none;
   color: white;
@@ -171,8 +186,8 @@
 }
 
 .fullDescription{
-  font-size: 2.5vw;
-  width: 66%;
+  font-size: 1.5rem; /* Mobile: taille fixe */
+  width: 90%; /* Mobile: largeur réduite */
   text-align: center;
 }
 
@@ -180,7 +195,7 @@
   background-color: rgb(20, 20, 20);
   border: none;
   color: white;
-  font-size: 1vw;
+  font-size: 0.9rem; /* Mobile: taille fixe */
   font-weight: 600;
   text-decoration: none;
   color: white;
@@ -219,4 +234,82 @@
   letter-spacing: 0.02em;
   line-height: 1.2;
   width: 50%;
+}
+
+/* Desktop - Styles pour écrans larges */
+@media (min-width: 769px) {
+  .top{
+    flex-direction: row; /* Desktop: layout en ligne */
+    height: 100vh; /* Desktop: hauteur fixe */
+  }
+
+  .left{
+    width: 45%; /* Desktop: 45% de largeur */
+    height: 100%; /* Desktop: hauteur complète */
+  }
+
+  .right{
+    width: 55%; /* Desktop: 55% de largeur */
+    padding: 0 4vw; /* Desktop: padding original */
+    height: 100%; /* Desktop: hauteur complète */
+  }
+
+  .titleContainer{
+    height: 60vh; /* Desktop: hauteur fixe */
+    padding: 0; /* Desktop: pas de padding */
+  }
+
+  .contentContainer{
+    height: 30vh; /* Desktop: hauteur fixe */
+    margin-bottom: 8vh; /* Desktop: margin original */
+    gap: 0; /* Desktop: pas d'espacement */
+  }
+
+  .projetContainer{
+    flex-direction: row; /* Desktop: layout en ligne */
+    align-items: center; /* Desktop: alignement centré */
+    width: 90%; /* Desktop: largeur réduite */
+    gap: 0; /* Desktop: pas d'espacement */
+  }
+
+  .projetService{
+    font-size: 1.5vw; /* Desktop: taille responsive */
+  }
+
+  .projetTitle{
+    font-size: 1vw; /* Desktop: taille responsive */
+  }
+
+  .fullDescriptionContainer{
+    flex-direction: row; /* Desktop: layout en ligne */
+    align-items: end; /* Desktop: alignement en bas */
+    width: 90%; /* Desktop: largeur réduite */
+    gap: 0; /* Desktop: pas d'espacement */
+  }
+
+  .title{
+    font-size: 5vw; /* Desktop: taille responsive */
+  }
+
+  .shortDescription{
+    font-size: 2vw; /* Desktop: taille responsive */
+  }
+
+  .Description{
+    font-size: 1vw; /* Desktop: taille responsive */
+    width: 39%; /* Desktop: largeur réduite */
+  }
+
+  .link{
+    font-size: 1vw; /* Desktop: taille responsive */
+  }
+
+  .fullDescription{
+    font-size: 2.5vw; /* Desktop: taille responsive */
+    width: 66%; /* Desktop: largeur réduite */
+  }
+
+  .projetTitlehiden button{
+    font-size: 1vw; /* Desktop: taille responsive */
+  }
 }
