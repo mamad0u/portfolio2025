@@ -1,21 +1,26 @@
+/* Mobile First - Styles de base pour mobile */
 .heroImgHolder {
   position: relative;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  /* overflow: hidden; */
+  /* Assurer que le container s'adapte au contenu */
+  padding: 2rem 0;
 }
 
 .heroImg {
   position: absolute;
   width: 50%;
-  height: 100%;
+  height: 100vh; /* Hauteur fixe pour toujours prendre 100% de la hauteur */
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Positionnement centré par défaut */
+  top: 0;
 }
-
 
 .image {
   width: 100%;
@@ -25,15 +30,18 @@
   transition: transform 0.3s ease;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* Desktop - Styles pour écrans larges */
+@media (min-width: 769px) {
   .heroImgHolder {
-    height: 80vh;
+    min-height: 100vh;
+    padding: 4rem 0;
   }
 }
 
+/* Responsive design pour très petits écrans */
 @media (max-width: 480px) {
   .heroImgHolder {
-    height: 60vh;
+    min-height: 80vh;
+    padding: 1rem 0;
   }
 } 

@@ -86,20 +86,25 @@ const ProjetTemplate = ({ projet }) => {
     // Animation overflowHiddenSlideUp pour le fullDescription au scroll
     const animateFullDescription = () => {
       if (fullDescriptionRef.current) {
+        console.log('Animation fullDescription démarrée'); // Debug
+        
         // Position initiale : caché en bas
         gsap.set(fullDescriptionRef.current, {
           y: "100%",
           opacity: 0
         });
 
-        // Animation au scroll avec ScrollTrigger
+        // Animation directe avec délai au lieu du ScrollTrigger
         gsap.to(fullDescriptionRef.current, {
           y: 0,
           opacity: 1,
           duration: 1,
           ease: "power2.out",
-          scrollTrigger: fullDescriptionRef.current // Se lance dès que l'élément entre dans le viewport
+          delay: 2, // Délai de 2 secondes pour s'assurer que l'élément est visible
+          onComplete: () => console.log('Animation fullDescription terminée') // Debug
         });
+      } else {
+        console.log('fullDescriptionRef.current est null'); // Debug
       }
     };
 

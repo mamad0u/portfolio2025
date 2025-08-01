@@ -1,4 +1,3 @@
-/* Mobile First - Styles de base pour mobile */
 .footerContainer {
   position: relative;
   height: 70vh;
@@ -42,7 +41,7 @@
 }
 
 .topfooter {
-  font-size: 2VW; /* Augmenté pour mobile */
+  font-size: 1.5vw;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -51,25 +50,22 @@
 }
 
 .topfootercontent {
-  padding: 0 2rem;
+  padding: 0 2vw;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   width: 100%;
 }
-
 .bottomfooter {
   width: 100%;
 }
-
 .legal {
   width: 100%;
   display: flex;
-  padding: 0 2rem;
+  padding: 0 2vw;
   justify-content: space-between;
   align-items: center;
-  font-size: 14px; /* Taille réduite pour mobile */
 }
 
 .middlefooter {
@@ -100,7 +96,7 @@
   margin: 0 20px;
   padding: 0;
   font-weight: 600;
-  font-size: 30vw; /* Augmenté à 30vw pour mobile */
+  font-size: 18vw;
   display: inline-block;
   white-space: nowrap;
 }
@@ -111,25 +107,5 @@
   }
   100% {
     transform: translateX(-50%);
-  }
-}
-
-/* Desktop - Styles pour écrans larges */
-@media (min-width: 769px) {
-  .topfooter {
-    font-size: 1.5vw; /* Retour à la taille originale pour desktop */
-  }
-
-  .topfootercontent {
-    padding: 0 2vw;
-  }
-
-  .legal {
-    padding: 0 2vw;
-    font-size: 1rem; /* Taille normale pour desktop */
-  }
-
-  .textanimationitem p {
-    font-size: 18vw; /* Retour à la taille originale pour desktop */
   }
 }

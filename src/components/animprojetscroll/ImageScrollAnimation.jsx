@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import styles from './ImageScrollAnimation.module.css';
@@ -17,7 +17,20 @@ const ImageScrollAnimation = ({
   const containerRef = useRef(null);
   const image1Ref = useRef(null);
   const image2Ref = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
   let scrollTriggerInstance = null;
+
+  // Fonction pour détecter la taille d'écran
+  const checkIsMobile = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
+
+  // Détecter la taille d'écran au montage et lors du redimensionnement
+  useEffect(() => {
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
 
   useEffect(() => {
     const initAnimations = () => {
@@ -25,6 +38,14 @@ const ImageScrollAnimation = ({
       if (scrollTriggerInstance) {
         scrollTriggerInstance.kill();
       }
+
+      // Calculer les positions dynamiquement basées sur la taille du container
+      const containerHeight = containerRef.current?.offsetHeight || window.innerHeight;
+      const viewportHeight = window.innerHeight;
+      
+      // Position relative au contenu plutôt qu'absolue - plus stable sur tous les écrans
+      const yOffset1 = isMobile ? -130 : -100; // Position relative plus stable
+      const yOffset2 = isMobile ? -85 : -85; // Position relative plus stable
 
       // Créer la nouvelle instance ScrollTrigger avec animation fluide
       scrollTriggerInstance = ScrollTrigger.create({
@@ -37,8 +58,8 @@ const ImageScrollAnimation = ({
           // Utiliser des easing pour une animation plus fluide
           const easeProgress = gsap.utils.clamp(0, 1, progress);
           const scale = gsap.utils.interpolate(0.20, 1, easeProgress);
-          const y1 = gsap.utils.interpolate(-125, 0, easeProgress); // Image 1
-          const y2 = gsap.utils.interpolate(-70, 0, easeProgress); // Image 2 (décalée)
+          const y1 = gsap.utils.interpolate(yOffset1, 0, easeProgress); // Image 1
+          const y2 = gsap.utils.interpolate(yOffset2, 0, easeProgress); // Image 2 (décalée)
           const rotation1 = gsap.utils.interpolate(-15, 0, easeProgress); // Image 1
           const rotation2 = gsap.utils.interpolate(15, 0, easeProgress); // Image 2 (rotation opposée)
           const x1 = gsap.utils.interpolate(-70, -50, easeProgress); // Image 1 va à -25%
@@ -49,7 +70,8 @@ const ImageScrollAnimation = ({
             scale,
             y: `${y1}%`,
             rotation: rotation1,
-            x: `${x1}%`
+            x: `${x1}%`,
+            height: "100vh" // Forcer la hauteur à 100vh
           });
 
           // Animation de l'image 2 (droite)
@@ -57,7 +79,8 @@ const ImageScrollAnimation = ({
             scale,
             y: `${y2}%`,
             rotation: rotation2,
-            x: `${x2}%`
+            x: `${x2}%`,
+            height: "100vh" // Forcer la hauteur à 100vh
           });
         },
       });
@@ -65,8 +88,8 @@ const ImageScrollAnimation = ({
       // ⚠️ Appliquer manuellement les styles initiaux avec interpolation
       const initialProgress = 0;
       const initialScale = gsap.utils.interpolate(0.20, 1, initialProgress);
-      const initialY1 = gsap.utils.interpolate(-125, 0, initialProgress);
-      const initialY2 = gsap.utils.interpolate(-70, 0, initialProgress);
+      const initialY1 = gsap.utils.interpolate(yOffset1, 0, initialProgress);
+      const initialY2 = gsap.utils.interpolate(yOffset2, 0, initialProgress);
       const initialRotation1 = gsap.utils.interpolate(-15, 0, initialProgress);
       const initialRotation2 = gsap.utils.interpolate(15, 0, initialProgress);
       const initialX1 = gsap.utils.interpolate(-70, -50, initialProgress);
@@ -76,14 +99,16 @@ const ImageScrollAnimation = ({
         scale: initialScale,
         y: `${initialY1}%`,
         rotation: initialRotation1,
-        x: `${initialX1}%`
+        x: `${initialX1}%`,
+        height: "100vh" // Forcer la hauteur à 100vh
       });
 
       gsap.set(image2Ref.current, {
         scale: initialScale,
         y: `${initialY2}%`,
         rotation: initialRotation2,
-        x: `${initialX2}%`
+        x: `${initialX2}%`,
+        height: "100vh" // Forcer la hauteur à 100vh
       });
     
       scrollTriggerInstance.refresh(); // utile si le layout a changé
@@ -142,7 +167,7 @@ const ImageScrollAnimation = ({
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
 
-  }, [imageSrc1, imageSrc2]);
+  }, [imageSrc1, imageSrc2, isMobile]); // Ajouter isMobile comme dépendance
 
   return (
     <section ref={containerRef} className={styles.heroImgHolder}>
