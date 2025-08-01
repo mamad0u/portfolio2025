@@ -2,24 +2,20 @@
 .heroImgHolder {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* overflow: hidden; */
-  /* Assurer que le container s'adapte au contenu */
-  padding: 2rem 0;
 }
 
 .heroImg {
   position: absolute;
   width: 50%;
-  height: 100vh; /* Hauteur fixe pour toujours prendre 100% de la hauteur */
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Positionnement centré par défaut */
-  top: 0;
+  top: -10vh; /* Mobile: images plus hautes */
 }
 
 .image {
@@ -32,16 +28,18 @@
 
 /* Desktop - Styles pour écrans larges */
 @media (min-width: 769px) {
-  .heroImgHolder {
-    min-height: 100vh;
-    padding: 4rem 0;
+  .heroImg {
+    top: 0; /* Desktop: position normale */
   }
 }
 
 /* Responsive design pour très petits écrans */
 @media (max-width: 480px) {
   .heroImgHolder {
-    min-height: 80vh;
-    padding: 1rem 0;
+    height: 60vh;
   }
+  
+  /* .heroImg {
+    top: -15vh;
+  } */
 } 

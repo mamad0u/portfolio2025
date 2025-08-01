@@ -39,13 +39,9 @@ const ImageScrollAnimation = ({
         scrollTriggerInstance.kill();
       }
 
-      // Calculer les positions dynamiquement basées sur la taille du container
-      const containerHeight = containerRef.current?.offsetHeight || window.innerHeight;
-      const viewportHeight = window.innerHeight;
-      
-      // Position relative au contenu plutôt qu'absolue - plus stable sur tous les écrans
-      const yOffset1 = isMobile ? -130 : -100; // Position relative plus stable
-      const yOffset2 = isMobile ? -85 : -85; // Position relative plus stable
+      // Ajuster les positions selon mobile/desktop
+      const yOffset1 = isMobile ? -110 : -125; // Moins haut sur mobile
+      const yOffset2 = isMobile ? -70 : -70; // Moins haut sur mobile
 
       // Créer la nouvelle instance ScrollTrigger avec animation fluide
       scrollTriggerInstance = ScrollTrigger.create({
@@ -70,8 +66,7 @@ const ImageScrollAnimation = ({
             scale,
             y: `${y1}%`,
             rotation: rotation1,
-            x: `${x1}%`,
-            height: "100vh" // Forcer la hauteur à 100vh
+            x: `${x1}%`
           });
 
           // Animation de l'image 2 (droite)
@@ -79,8 +74,7 @@ const ImageScrollAnimation = ({
             scale,
             y: `${y2}%`,
             rotation: rotation2,
-            x: `${x2}%`,
-            height: "100vh" // Forcer la hauteur à 100vh
+            x: `${x2}%`
           });
         },
       });
@@ -99,16 +93,14 @@ const ImageScrollAnimation = ({
         scale: initialScale,
         y: `${initialY1}%`,
         rotation: initialRotation1,
-        x: `${initialX1}%`,
-        height: "100vh" // Forcer la hauteur à 100vh
+        x: `${initialX1}%`
       });
 
       gsap.set(image2Ref.current, {
         scale: initialScale,
         y: `${initialY2}%`,
         rotation: initialRotation2,
-        x: `${initialX2}%`,
-        height: "100vh" // Forcer la hauteur à 100vh
+        x: `${initialX2}%`
       });
     
       scrollTriggerInstance.refresh(); // utile si le layout a changé
