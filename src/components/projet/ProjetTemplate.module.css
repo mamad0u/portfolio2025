@@ -21,7 +21,7 @@
 }
 
 .container {
- width: 100vw;
+ width: 100%;
  display: flex;
  flex-direction: column;
  color: white;
@@ -29,34 +29,60 @@
 
 .top{
   display: flex;
+  flex-direction: column-reverse;
   align-items: flex-start;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0 auto;
 }
 
 .left{
-  width: 45%;
-  height: 100%;
+  width: 100%;
+  height: 35vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: -webkit-fill-available;
-
+  justify-content: center;
+}
+.imageContainer{
+  width: 100%;
+  height: 35vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+
 .right{
-  width: 55%;
+  width: 100%;
   padding: 0 4vw;
-  height: 100%;
+  min-height: 85vh;
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+  .top {
+    flex-direction: row;
+  }
+  
+  .left {
+    width: 45%;
+    height: 100%;
+    height: 100vh;
+  }
+  
+  .right {
+    width: 55%;
+    height: 100%;
   justify-content: space-between;
 
+  }
 }
 .titleContainer{
   width: 100%;
-  height: 60vh;
+  min-height: 30vh;
   display: flex;
   align-items: center;
 }
@@ -64,8 +90,24 @@
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  height: 30vh;
-  margin-bottom: 8vh;
+  min-height: 25vh;
+  margin-bottom: 4vh;
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+  .titleContainer {
+    min-height: 60vh;
+  }
+  
+  .contentContainer {
+    min-height: 30vh;
+    margin-bottom: 8vh;
+  }
+  
+  .imageContainer {
+    height: 100%;
+  }
 }
 .projetContainer{
   display: flex;
@@ -74,12 +116,23 @@
   width: 90%;
 }
 .projetService{
-  font-size: 1.5vw;
+  font-size: 4vw;
   font-weight: 600;
 }
 .projetTitle{
-  font-size: 1vw;
+  font-size: 3vw;
   font-weight: 100;
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+  .projetService {
+    font-size: 1.5vw;
+  }
+  
+  .projetTitle {
+    font-size: 1vw;
+  }
 }
 .fullDescriptionContainer{
   display: flex;
@@ -88,9 +141,20 @@
   width: 90%;
 }
 .title{
-  font-size: 5vw;
+  font-size: 8vw;
   font-weight: 800;
   line-height: 1;
+}
+.title span{
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+/* Desktop styles */
+@media (min-width: 768px) {
+  .title {
+    font-size: 5vw;
+  }
 }
 .title span{
   display: flex;
@@ -126,20 +190,21 @@
   font-size: 2vw;
 }
 .Description{
-  font-size: 1vw;
+  font-size: 3.5vw;
   line-height: 1.2;
   letter-spacing: 0.02em;
   font-weight: 400;
-  width: 39%;
+  width: 54%;
 }
 
-.imageContainer{
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Desktop styles */
+@media (min-width: 768px) {
+  .Description {
+    font-size: 1vw;
+    width: 39%;
+  }
 }
+
 
 .image {
   width: 100%;
@@ -171,16 +236,18 @@
 }
 
 .fullDescription{
-  font-size: 2.5vw;
-  width: 66%;
+  font-size: 4.5vw;
+  width: 90%;
   text-align: center;
+  line-height: 1.5;
+
 }
 
 .projetTitlehiden button{
   background-color: rgb(20, 20, 20);
   border: none;
   color: white;
-  font-size: 1vw;
+  font-size: 3vw;
   font-weight: 600;
   text-decoration: none;
   color: white;
@@ -190,33 +257,87 @@
   padding: 6px 10px 5px 10px;
 }
 
+/* Desktop styles */
+@media (min-width: 768px) {
+  .projetTitlehiden button {
+    font-size: 1vw;
+  }
+  .fullDescription{
+    font-size: 2.5vw;
+    width: 66%;
+    text-align: center;
+  line-height: 1;
+
+  }
+  
+}
+
 .monrole{
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  flex-direction: column;
   align-items: center;
   width: 90%;
   margin: 0 auto;
-  height: 100vh;
+  height: 70vh;
 }
 
 .monroleContainer{
   display: flex;  
-  justify-content: space-around;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   width: 100%;
   height: fit-content;
 }
 
 .monroleTitle{  
-  font-size: 3vw;
+  margin: 20px auto;
+  font-size: 7vw;
   font-weight: 600;
   width: 50%;
 }
 
 .monroleDescription{
-  font-size: 1.5vw;
+  font-size: 3vw;
   font-weight: 400;
   letter-spacing: 0.02em;
-  line-height: 1.2;
-  width: 50%;
+  line-height: 1.4;
+  width: 80%;
+}
+
+
+/* Desktop styles */
+@media (min-width: 768px) {
+  .monrole{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 90%;
+    margin: 0 auto;
+    height: 100vh;
+  }
+  
+  .monroleContainer{
+    display: flex;  
+    justify-content: space-around;
+    align-items: flex-start;
+    width: 100%;
+    height: fit-content;
+  }
+  
+  .monroleTitle{  
+    font-size: 3vw;
+    font-weight: 600;
+    width: 50%;
+  }
+  
+  .monroleDescription{
+    font-size: 1.5vw;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    width: 50%;
+  }
+
 }

@@ -3,7 +3,7 @@ export const projetsData = [
     slug: "blurry", 
     name: "BLURRY", 
     adjetive: ["CREATIVE", "HOME-MADE", "INDEPENDENT"],
-    descriptiontech: "NEXTJS, SHOPIFY,STOREFRONT API, GRAPHQL, GSAP", 
+    descriptiontech: "NEXTJS, SHOPIFY,STOREFRONT API, GRAPHQL, GSAP,UI/UX", 
     fullDescription: "Blurry est une marque de vetement streetwear bordelaise cree par un indeendant. Il a besoin d'un site web pour presenter sa marque et ses produits. Il a besoin d'un site web pour presenter.",
     technologies: ["Next.js", "React", "GSAP", "CSS Modules"],
     client: "BLURRY",
@@ -15,13 +15,13 @@ export const projetsData = [
     monrole: "My team and I developed a website for a creative studio, taking the project from concept to full implementation. We crafted a unique digital experience that seamlessly blends stunning 3D graphics, smooth animations, and an engaging user journey. Every aspect, from interactive elements to performance optimization, was carefully designed to reflect the studio`s creative identity and vision. The result is a visually striking and technically refined website that enhances the brand`s online presence."
   },
   { 
-    slug: "e-commerce", 
-    name: "E-COMMERCE", 
-    description: "UN SITE DE VENTE EN LIGNE",
+    slug: "rose&violette", 
+    name: "ROSE & VIOLETTE", 
+    description: ["CATERING", "RECEPTION", "RESERVATION DESPACES"],
     fullDescription: "Une plateforme e-commerce complète avec gestion des produits, panier d'achat, système de paiement sécurisé et interface d'administration.",
-    technologies: ["React", "Node.js", "MongoDB", "Stripe", "Express"],
-    image: "/images/ecommerce.jpg",
-    imagecard: "/images/ecommerce.jpg",
+    technologies: ["Next.js", "React", "GSAP", "CSS Modules"],
+    image: "/images/rose&violette/rose&violette1.webp",
+    imagecard: "/images/rose&violette/rose&violette1.webp",
     github: "https://github.com/votre-username/ecommerce",
     live: "https://votre-ecommerce.com"
   },

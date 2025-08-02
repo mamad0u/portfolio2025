@@ -33,15 +33,36 @@ const ImageScrollAnimation = ({
   }, []);
 
   useEffect(() => {
+    // Si on est sur mobile, pas d'animations - images en position statique
+    if (isMobile) {
+      // Position statique pour mobile
+      gsap.set(image1Ref.current, {
+        scale: 1,
+        y: 0,
+        rotation: 0,
+        x: "-50%",
+        opacity: 1
+      });
+
+      gsap.set(image2Ref.current, {
+        scale: 1,
+        y: 0,
+        rotation: 0,
+        x: "50%",
+        opacity: 1
+      });
+      return;
+    }
+
     const initAnimations = () => {
       // Nettoyer l'instance précédente si elle existe
       if (scrollTriggerInstance) {
         scrollTriggerInstance.kill();
       }
 
-      // Ajuster les positions selon mobile/desktop
-      const yOffset1 = isMobile ? -110 : -125; // Moins haut sur mobile
-      const yOffset2 = isMobile ? -70 : -70; // Moins haut sur mobile
+      // Positions pour desktop uniquement
+      const yOffset1 = -125;
+      const yOffset2 = -70;
 
       // Créer la nouvelle instance ScrollTrigger avec animation fluide
       scrollTriggerInstance = ScrollTrigger.create({
@@ -106,7 +127,7 @@ const ImageScrollAnimation = ({
       scrollTriggerInstance.refresh(); // utile si le layout a changé
     };
 
-    // Animation d'apparition séparée des images au scroll
+    // Animation d'apparition séparée des images au scroll (desktop uniquement)
     const animateImageAppearance = () => {
       // Position initiale des images pour l'apparition
       gsap.set(image1Ref.current, {
@@ -138,14 +159,43 @@ const ImageScrollAnimation = ({
       });
     };
 
-    // Initialiser les animations
+    // Initialiser les animations (desktop uniquement)
     initAnimations();
     animateImageAppearance();
 
     // Gestion du resize window
     const handleResize = () => {
-      initAnimations();
-      animateImageAppearance();
+      // Nettoyer toutes les animations existantes
+      if (scrollTriggerInstance) {
+        scrollTriggerInstance.kill();
+      }
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      
+      // Vérifier si on est maintenant sur mobile
+      const currentIsMobile = window.innerWidth <= 768;
+      
+      if (currentIsMobile) {
+        // Position statique pour mobile
+        gsap.set(image1Ref.current, {
+          scale: 1,
+          y: 0,
+          rotation: 0,
+          x: "-50%",
+          opacity: 1
+        });
+
+        gsap.set(image2Ref.current, {
+          scale: 1,
+          y: 0,
+          rotation: 0,
+          x: "50%",
+          opacity: 1
+        });
+      } else {
+        // Réinitialiser les animations pour desktop
+        initAnimations();
+        animateImageAppearance();
+      }
     };
 
     window.addEventListener('resize', handleResize);
