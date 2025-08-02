@@ -312,6 +312,7 @@
   .monrole{
     display: flex;
     justify-content: space-around;
+    flex-direction: row;
     align-items: center;
     width: 90%;
     margin: 0 auto;
@@ -323,11 +324,13 @@
     justify-content: space-around;
     align-items: flex-start;
     width: 100%;
+    flex-direction: row;
     height: fit-content;
   }
   
   .monroleTitle{  
     font-size: 3vw;
+    margin: 0;
     font-weight: 600;
     width: 50%;
   }
