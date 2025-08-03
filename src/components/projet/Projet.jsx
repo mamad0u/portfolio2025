@@ -491,7 +491,9 @@ const Projet = ({ bgColor }) => {
   }, [bgColor, isMobile]); // Ajouter isMobile comme dépendance
 
   return (
-    <section ref={projetRef} id="projects" className={styles.projet}>
+    <>
+      <div className="revealer"></div>
+      <section ref={projetRef} id="projects" className={styles.projet}>
 
       
       {/* Tooltip - toujours présent dans le DOM (desktop uniquement) */}
@@ -566,7 +568,8 @@ const Projet = ({ bgColor }) => {
           )}
         </div>
       ))}
-    </section>
+      </section>
+    </>
   );
 };
 
