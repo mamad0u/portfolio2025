@@ -531,6 +531,11 @@ const Projet = ({ bgColor }) => {
           onMouseMove={isMobile ? undefined : handleMouseMove}
           onMouseLeave={isMobile ? undefined : () => handleCardLeave(index)}
           onClick={(e) => {
+            // Vérifier que le router est prêt (mobile et desktop)
+            if (!isRouterReady) {
+              return;
+            }
+            
             // Sur mobile, pas besoin de vérifier les animations
             if (isMobile) {
               handleNavigation(`/projet/${projets[index].slug}`)(e);
