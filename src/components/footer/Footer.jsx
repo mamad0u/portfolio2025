@@ -42,18 +42,15 @@ const Footer = () => {
     if (contactSection && footerRef.current) {
         scrollTriggerRef.current = ScrollTrigger.create({
         trigger: contactSection,
-        start: isMobile ? "bottom 95%" : "bottom bottom", // Plus tard sur mobile
-        end: isMobile ? "bottom 80%" : "bottom top", // Ajuster la fin pour mobile
+        start: isMobile ? "bottom 90%" : "bottom bottom", // Ajuster le trigger pour mobile
+        end: "bottom top",
         scrub: 1, // Lie l'animation au scroll
         onUpdate: (self) => {
           // Calculer la progression (0 à 1)
           const progress = self.progress;
           
           // Animer le bottom de -30vh à 0 en fonction du scroll
-          // Sur mobile, commencer l'animation plus tard et avec des valeurs différentes
-          const startBottom = isMobile ? -35 : -30;
-          const endBottom = 0;
-          const newBottom = startBottom + (progress * (endBottom - startBottom));
+          const newBottom = -30 + (progress * 30 * 1.4); // De -30vh à 0vh
           
           gsap.set(footerRef.current, {
             bottom: `${newBottom}vh`
