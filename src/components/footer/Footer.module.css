@@ -12,6 +12,25 @@
   /* transition: bottom 0.1s ease; */
 }
 
+/* Ajustements pour mobile */
+@media (max-width: 768px) {
+  .fixedFooter {
+    bottom: -35vh; /* Commencer plus bas sur mobile */
+  }
+  
+  .footerContainer {
+    height: 75vh; /* Plus de hauteur sur mobile */
+  }
+  
+  .footer {
+    min-height: 75vh;
+  }
+  
+  .footerContent {
+    height: 70vh;
+  }
+}
+
 .footer {
   width: 100%;
   min-height: 70vh;
