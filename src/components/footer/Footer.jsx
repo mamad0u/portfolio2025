@@ -12,6 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 const Footer = () => {
   const footerRef = useRef(null);
   const scrollTriggerRef = useRef(null);
+  const initialViewportHeightRef = useRef(null); // Stocker la hauteur initiale
   
   // État pour détecter si on est sur mobile
   const [isMobile, setIsMobile] = useState(false);
@@ -27,6 +28,8 @@ const Footer = () => {
   // Détecter la taille d'écran au montage et lors du redimensionnement
   useEffect(() => {
     checkIsMobile();
+    // Stocker la hauteur initiale de l'écran
+    initialViewportHeightRef.current = window.innerHeight;
     window.addEventListener('resize', checkIsMobile);
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
@@ -49,10 +52,9 @@ const Footer = () => {
           // Calculer la progression (0 à 1)
           const progress = self.progress;
           
-          // Calculer la hauteur de l'écran en pixels
-          const viewportHeight = window.innerHeight;
+          // Utiliser la hauteur initiale stockée pour éviter les changements
+          const viewportHeight = initialViewportHeightRef.current || window.innerHeight;
           const initialBottom = -(viewportHeight * 0.3); // -30% de la hauteur de l'écran
-          const finalBottom = 0;
           
           // Animer le bottom de initialBottom à 0 en fonction du scroll
           const newBottom = initialBottom + (progress * Math.abs(initialBottom) * 1.4);
