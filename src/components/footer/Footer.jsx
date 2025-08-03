@@ -42,18 +42,23 @@ const Footer = () => {
     if (contactSection && footerRef.current) {
         scrollTriggerRef.current = ScrollTrigger.create({
         trigger: contactSection,
-        start: isMobile ? "bottom 90%" : "bottom bottom", // Ajuster le trigger pour mobile
+        start: isMobile ? "bottom 95%" : "bottom bottom", // Ajuster le trigger pour mobile
         end: "bottom top",
         scrub: 1, // Lie l'animation au scroll
         onUpdate: (self) => {
           // Calculer la progression (0 à 1)
           const progress = self.progress;
           
-          // Animer le bottom de -30vh à 0 en fonction du scroll
-          const newBottom = -30 + (progress * 30 * 1.4); // De -30vh à 0vh
+          // Calculer la hauteur de l'écran en pixels
+          const viewportHeight = window.innerHeight;
+          const initialBottom = -(viewportHeight * 0.3); // -30% de la hauteur de l'écran
+          const finalBottom = 0;
+          
+          // Animer le bottom de initialBottom à 0 en fonction du scroll
+          const newBottom = initialBottom + (progress * Math.abs(initialBottom) * 1.4);
           
           gsap.set(footerRef.current, {
-            bottom: `${newBottom}vh`
+            bottom: `${newBottom}px`
           });
         },
         onEnter: () => {
