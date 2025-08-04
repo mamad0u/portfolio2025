@@ -235,8 +235,11 @@ const InteractiveGradient = ({
 
     // Listener pour les changements de visual viewport (mobile)
     const handleVisualViewportChange = () => {
-      // Utilise la version debounced pour les changements fréquents
-      debouncedResize();
+      // Ajuste la position du canvas en fonction du visual viewport
+      if (canvasRef.current && window.visualViewport) {
+        const canvas = canvasRef.current;
+        canvas.style.transform = `translateY(${window.visualViewport.offsetTop}px)`;
+      }
     };
 
     document.addEventListener("mousemove", handleMouseMove);
@@ -246,6 +249,7 @@ const InteractiveGradient = ({
     // Ajouter le listener pour visual viewport si disponible
     if (window.visualViewport) {
       window.visualViewport.addEventListener("resize", handleVisualViewportChange);
+      window.visualViewport.addEventListener("scroll", handleVisualViewportChange);
     }
 
     const animate = () => {
@@ -313,6 +317,7 @@ const InteractiveGradient = ({
       // Supprimer le listener du visual viewport
       if (window.visualViewport) {
         window.visualViewport.removeEventListener("resize", handleVisualViewportChange);
+        window.visualViewport.removeEventListener("scroll", handleVisualViewportChange);
       }
       
       // Nettoyer le debounce
