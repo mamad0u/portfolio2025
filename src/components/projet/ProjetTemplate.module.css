@@ -224,7 +224,7 @@
 }
 
 .texteprojetcontaineur{
-  height: 100vh;
+  height: 70vh;
   width: 100%;
   display: flex;
   align-items: center;
@@ -259,6 +259,10 @@
 
 /* Desktop styles */
 @media (min-width: 768px) {
+  
+.texteprojetcontaineur{
+  height: 100vh;
+}
   .projetTitlehiden button {
     font-size: 1vw;
   }
