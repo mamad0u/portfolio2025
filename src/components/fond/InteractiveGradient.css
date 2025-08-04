@@ -3,7 +3,17 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 200lvh;
+  height: 100svh;
   z-index: -1;
   pointer-events: none;
+  /* Améliorations pour mobile */
+  min-height: 100vh; /* Fallback pour les navigateurs qui ne supportent pas svh */
+  background: #2d5010; /* Couleur de fallback pour éviter l'espace noir */
+}
+
+/* Support pour les navigateurs plus anciens */
+@supports not (height: 100svh) {
+  .gradient-canvas {
+    height: 100vh;
+  }
 }

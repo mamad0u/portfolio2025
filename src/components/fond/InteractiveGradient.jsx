@@ -31,6 +31,24 @@ const InteractiveGradient = ({
     return [r, g, b];
   };
 
+  // Fonction pour obtenir la hauteur réelle du viewport
+  const getViewportHeight = () => {
+    // Utilise visual viewport si disponible (plus précis pour mobile)
+    if (window.visualViewport) {
+      return window.visualViewport.height;
+    }
+    // Fallback vers innerHeight
+    return window.innerHeight;
+  };
+
+  // Fonction pour obtenir la largeur réelle du viewport
+  const getViewportWidth = () => {
+    if (window.visualViewport) {
+      return window.visualViewport.width;
+    }
+    return window.innerWidth;
+  };
+
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -42,12 +60,15 @@ const InteractiveGradient = ({
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     rendererRef.current = renderer;
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    const initialWidth = getViewportWidth();
+    const initialHeight = getViewportHeight();
+    
+    renderer.setSize(initialWidth, initialHeight);
     canvasRef.current.appendChild(renderer.domElement);
 
     const fluidTarget1 = new THREE.WebGLRenderTarget(
-      window.innerWidth,
-      window.innerHeight,
+      initialWidth,
+      initialHeight,
       {
         minFilter: THREE.LinearFilter,
         magFilter: THREE.LinearFilter,
@@ -57,8 +78,8 @@ const InteractiveGradient = ({
     );
 
     const fluidTarget2 = new THREE.WebGLRenderTarget(
-      window.innerWidth,
-      window.innerHeight,
+      initialWidth,
+      initialHeight,
       {
         minFilter: THREE.LinearFilter,
         magFilter: THREE.LinearFilter,
@@ -75,7 +96,7 @@ const InteractiveGradient = ({
       uniforms: {
         iTime: { value: 0 },
         iResolution: {
-          value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+          value: new THREE.Vector2(initialWidth, initialHeight),
         },
         iMouse: { value: new THREE.Vector4(0, 0, 0, 0) },
         iFrame: { value: 0 },
@@ -94,7 +115,7 @@ const InteractiveGradient = ({
       uniforms: {
         iTime: { value: 0 },
         iResolution: {
-          value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+          value: new THREE.Vector2(initialWidth, initialHeight),
         },
         iFluid: { value: null },
         uDistortionAmount: { value: distortionAmount },
@@ -140,8 +161,8 @@ const InteractiveGradient = ({
     };
 
     const handleResize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      const width = getViewportWidth();
+      const height = getViewportHeight();
 
       renderer.setSize(width, height);
       fluidMaterial.uniforms.iResolution.value.set(width, height);
@@ -152,9 +173,19 @@ const InteractiveGradient = ({
       frameCount = 0;
     };
 
+    // Listener pour les changements de visual viewport (mobile)
+    const handleVisualViewportChange = () => {
+      handleResize();
+    };
+
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseleave", handleMouseLeave);
     window.addEventListener("resize", handleResize);
+    
+    // Ajouter le listener pour visual viewport si disponible
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", handleVisualViewportChange);
+    }
 
     const animate = () => {
       const time = performance.now() * 0.001;
@@ -217,6 +248,11 @@ const InteractiveGradient = ({
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseleave", handleMouseLeave);
       window.removeEventListener("resize", handleResize);
+      
+      // Supprimer le listener du visual viewport
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", handleVisualViewportChange);
+      }
 
       if (renderer.domElement && canvasRef.current) {
         canvasRef.current.removeChild(renderer.domElement);
