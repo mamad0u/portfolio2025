@@ -9,6 +9,10 @@
   /* Améliorations pour mobile */
   min-height: 100vh; /* Fallback pour les navigateurs qui ne supportent pas svh */
   background: #2d5010; /* Couleur de fallback pour éviter l'espace noir */
+  /* Transition fluide pour les changements de taille */
+  transition: height 0.1s ease-out;
+  /* Optimisation pour éviter les saccades */
+  will-change: height;
 }
 
 /* Support pour les navigateurs plus anciens */

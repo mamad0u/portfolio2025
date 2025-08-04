@@ -49,6 +49,19 @@ const InteractiveGradient = ({
     return window.innerWidth;
   };
 
+  // Debounce function pour optimiser les redimensionnements
+  const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  };
+
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -164,18 +177,35 @@ const InteractiveGradient = ({
       const width = getViewportWidth();
       const height = getViewportHeight();
 
+      // Mise à jour immédiate du renderer
       renderer.setSize(width, height);
+      
+      // Mise à jour des uniforms de résolution
       fluidMaterial.uniforms.iResolution.value.set(width, height);
       displayMaterial.uniforms.iResolution.value.set(width, height);
 
+      // Redimensionnement des textures de fluide
       fluidTarget1.setSize(width, height);
       fluidTarget2.setSize(width, height);
+      
+      // Reset du frame count pour éviter les artefacts
       frameCount = 0;
+      
+      // Force un rendu immédiat pour éviter le délai
+      if (renderer && displayPlane && camera) {
+        displayMaterial.uniforms.iFluid.value = currentFluidTarget.texture;
+        renderer.setRenderTarget(null);
+        renderer.render(displayPlane, camera);
+      }
     };
+
+    // Version debounced pour les changements fréquents (comme le scroll mobile)
+    const debouncedResize = debounce(handleResize, 50);
 
     // Listener pour les changements de visual viewport (mobile)
     const handleVisualViewportChange = () => {
-      handleResize();
+      // Utilise la version debounced pour les changements fréquents
+      debouncedResize();
     };
 
     document.addEventListener("mousemove", handleMouseMove);
@@ -252,6 +282,11 @@ const InteractiveGradient = ({
       // Supprimer le listener du visual viewport
       if (window.visualViewport) {
         window.visualViewport.removeEventListener("resize", handleVisualViewportChange);
+      }
+      
+      // Nettoyer le debounce
+      if (debouncedResize && debouncedResize.cancel) {
+        debouncedResize.cancel();
       }
 
       if (renderer.domElement && canvasRef.current) {
