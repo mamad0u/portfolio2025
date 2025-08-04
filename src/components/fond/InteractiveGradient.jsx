@@ -65,6 +65,21 @@ const InteractiveGradient = ({
     return window.innerWidth;
   };
 
+  // Fonction pour obtenir la hauteur fixe (toujours la même)
+  const getFixedHeight = () => {
+    // Détecte si on est sur mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // Sur mobile, utilise la hauteur maximale possible
+      // Cela inclut l'espace pour la barre de navigation
+      return Math.max(window.innerHeight, window.screen.height);
+    }
+    
+    // Sur desktop, utilise innerHeight
+    return window.innerHeight;
+  };
+
   // Debounce function pour optimiser les redimensionnements
   const debounce = (func, wait) => {
     let timeout;
@@ -90,7 +105,7 @@ const InteractiveGradient = ({
     rendererRef.current = renderer;
 
     const initialWidth = getViewportWidth();
-    const initialHeight = getMaxViewportHeight(); // Utilise la hauteur maximale
+    const initialHeight = getFixedHeight(); // Utilise la hauteur fixe
     
     renderer.setSize(initialWidth, initialHeight);
     canvasRef.current.appendChild(renderer.domElement);
@@ -191,19 +206,18 @@ const InteractiveGradient = ({
 
     const handleResize = () => {
       const width = getViewportWidth();
-      const maxHeight = getMaxViewportHeight(); // Utilise la hauteur maximale
-      const currentHeight = getViewportHeight(); // Hauteur actuelle
+      const height = getFixedHeight(); // Garde la hauteur fixe
 
-      // Mise à jour immédiate du renderer avec la hauteur maximale
-      renderer.setSize(width, maxHeight);
+      // Mise à jour immédiate du renderer
+      renderer.setSize(width, height);
       
-      // Mise à jour des uniforms de résolution avec la hauteur maximale
-      fluidMaterial.uniforms.iResolution.value.set(width, maxHeight);
-      displayMaterial.uniforms.iResolution.value.set(width, maxHeight);
+      // Mise à jour des uniforms de résolution
+      fluidMaterial.uniforms.iResolution.value.set(width, height);
+      displayMaterial.uniforms.iResolution.value.set(width, height);
 
-      // Redimensionnement des textures de fluide avec la hauteur maximale
-      fluidTarget1.setSize(width, maxHeight);
-      fluidTarget2.setSize(width, maxHeight);
+      // Redimensionnement des textures de fluide
+      fluidTarget1.setSize(width, height);
+      fluidTarget2.setSize(width, height);
       
       // Reset du frame count pour éviter les artefacts
       frameCount = 0;

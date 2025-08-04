@@ -3,19 +3,18 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh; /* Utilise vh au lieu de svh pour avoir la hauteur maximale */
+  height: 100dvh; /* Dynamic viewport height - s'adapte automatiquement */
   z-index: -1;
   pointer-events: none;
   /* Améliorations pour mobile */
-  min-height: 100vh;
+  min-height: 100vh; /* Fallback */
   background: #2d5010; /* Couleur de fallback pour éviter l'espace noir */
-  /* Pas de transition pour éviter les délais */
   /* Optimisation pour éviter les saccades */
   will-change: transform;
 }
 
-/* Support pour les navigateurs plus anciens */
-@supports not (height: 100vh) {
+/* Support pour les navigateurs qui ne supportent pas dvh */
+@supports not (height: 100dvh) {
   .gradient-canvas {
     height: 100vh;
   }
