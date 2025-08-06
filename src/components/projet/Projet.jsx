@@ -59,26 +59,12 @@ const Projet = ({ bgColor }) => {
       return;
     }
 
-    // Sur mobile, utiliser une approche plus simple comme dans le Header
-    if (isMobile) {
-      try {
-        if (transitionRouter && typeof transitionRouter.push === 'function') {
-          transitionRouter.push(path, {
-            onTransitionReady: triggerPageTransition,
-          });
-        } else {
-          fallbackRouter.push(path);
-        }
-      } catch (error) {
-        fallbackRouter.push(path);
-      }
-      return;
-    }
-
-    // Sur desktop, garder la logique existante
+    // Vérifier que le router est prêt
     if (!isRouterReady) {
+      // Réessayer après un court délai
       setTimeout(() => {
         if (isRouterReady) {
+          // Utiliser une fonction anonyme pour éviter la récursion
           const navigate = (targetPath) => {
             try {
               if (transitionRouter && typeof transitionRouter.push === 'function') {
@@ -99,14 +85,17 @@ const Projet = ({ bgColor }) => {
     }
 
     try {
+      // Essayer d'abord avec le transition router
       if (transitionRouter && typeof transitionRouter.push === 'function') {
         transitionRouter.push(path, {
-          onTransitionReady: triggerPageTransition,
-        });
+      onTransitionReady: triggerPageTransition,
+    });
       } else {
+        // Fallback vers le router standard
         fallbackRouter.push(path);
       }
     } catch (error) {
+      // Fallback vers le router standard en cas d'erreur
       fallbackRouter.push(path);
     }
   };
@@ -542,13 +531,13 @@ const Projet = ({ bgColor }) => {
           onMouseMove={isMobile ? undefined : handleMouseMove}
           onMouseLeave={isMobile ? undefined : () => handleCardLeave(index)}
           onClick={(e) => {
-            // Sur mobile, navigation directe sans vérifications
+            // Sur mobile, pas besoin de vérifier les animations
             if (isMobile) {
               handleNavigation(`/projet/${projets[index].slug}`)(e);
               return;
             }
             
-            // Sur desktop, vérifier que les animations sont initialisées
+            // Vérifier que les animations sont initialisées (desktop uniquement)
             if (!animationsInitialized || !levitationAnimations[index]) {
               return;
             }
