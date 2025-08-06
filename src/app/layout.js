@@ -23,6 +23,8 @@ export default function RootLayout({ children }) {
     <html lang="fr">    
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
            {children}
+           {/* Élément revealer pour les animations de transition */}
+           <div className="revealer"></div>
       </body>
     </html>
     </ViewTransitions>

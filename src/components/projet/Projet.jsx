@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
+import CustomEase from 'gsap/CustomEase';
 import { getAllProjets } from '../../data/projets';
 import styles from './Projet.module.css';
 import { useTransitionRouter } from "next-view-transitions";
@@ -11,7 +12,8 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 
 // Enregistrer les plugins
-gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, CustomEase);
+CustomEase.create("hop", "0.9, 0, 0.1, 1");
 
 const Projet = ({ bgColor }) => {
 
@@ -35,22 +37,49 @@ const Projet = ({ bgColor }) => {
   }, []);
 
   function triggerPageTransition() {
-    document.documentElement.animate(
-      [
-        {
-          clipPath: "polygon(25% 75%, 75% 75%, 75% 75%, 25% 75%)",
-        },
-        {
-          clipPath: "polygon(0% 100%, 100% 100%, 100% 0%, 0% 0%)",
-        },
-      ],
-      {
-        duration: 1250,
-        easing: "cubic-bezier(0.9, 0, 0.1, 1)",
-        pseudoElement: "::view-transition-new(root)",
+    // Vérifier si les View Transitions sont supportées
+    const supportsViewTransitions = typeof document.startViewTransition === "function";
+    
+    if (supportsViewTransitions) {
+      // Essayer d'abord avec les View Transitions natives
+      try {
+        document.documentElement.animate(
+          [
+            {
+              clipPath: "polygon(25% 75%, 75% 75%, 75% 75%, 25% 75%)",
+            },
+            {
+              clipPath: "polygon(0% 100%, 100% 100%, 100% 0%, 0% 0%)",
+            },
+          ],
+          {
+            duration: 1250,
+            easing: "cubic-bezier(0.9, 0, 0.1, 1)",
+            pseudoElement: "::view-transition-new(root)",
+          }
+        );
+      } catch (error) {
+        // Fallback vers GSAP si les View Transitions échouent
+        fallbackTransition();
       }
-    );
+    } else {
+      // Fallback vers GSAP si les View Transitions ne sont pas supportées
+      fallbackTransition();
+    }
   }
+
+  // Fonction de fallback utilisant GSAP (comme dans useRevealer)
+  const fallbackTransition = () => {
+    const revealer = document.querySelector('.revealer');
+    if (revealer) {
+      gsap.set(revealer, { scaleY: 1 });
+      gsap.to(revealer, {
+        scaleY: 0,
+        duration: 1.25,
+        ease: "hop",
+      });
+    }
+  };
 
   const handleNavigation = (path) => (e) => {
     e.preventDefault();
@@ -59,45 +88,48 @@ const Projet = ({ bgColor }) => {
       return;
     }
 
+    // Fonction de navigation avec fallback robuste
+    const navigate = (targetPath) => {
+      try {
+        if (transitionRouter && typeof transitionRouter.push === 'function') {
+          transitionRouter.push(targetPath, {
+            onTransitionReady: triggerPageTransition,
+          });
+        } else {
+          // Fallback : déclencher l'animation manuellement puis naviguer
+          triggerPageTransition();
+          setTimeout(() => {
+            fallbackRouter.push(targetPath);
+          }, 1250); // Attendre que l'animation se termine
+        }
+      } catch (error) {
+        // Fallback en cas d'erreur
+        triggerPageTransition();
+        setTimeout(() => {
+          fallbackRouter.push(targetPath);
+        }, 1250);
+      }
+    };
+
     // Vérifier que le router est prêt
     if (!isRouterReady) {
       // Réessayer après un court délai
       setTimeout(() => {
         if (isRouterReady) {
-          // Utiliser une fonction anonyme pour éviter la récursion
-          const navigate = (targetPath) => {
-            try {
-              if (transitionRouter && typeof transitionRouter.push === 'function') {
-                transitionRouter.push(targetPath, {
-                  onTransitionReady: triggerPageTransition,
-                });
-              } else {
-                fallbackRouter.push(targetPath);
-              }
-            } catch (error) {
-              fallbackRouter.push(targetPath);
-            }
-          };
           navigate(path);
+        } else {
+          // Fallback final si le router n'est toujours pas prêt
+          triggerPageTransition();
+          setTimeout(() => {
+            fallbackRouter.push(path);
+          }, 1250);
         }
       }, 100);
       return;
     }
 
-    try {
-      // Essayer d'abord avec le transition router
-      if (transitionRouter && typeof transitionRouter.push === 'function') {
-        transitionRouter.push(path, {
-      onTransitionReady: triggerPageTransition,
-    });
-      } else {
-        // Fallback vers le router standard
-        fallbackRouter.push(path);
-      }
-    } catch (error) {
-      // Fallback vers le router standard en cas d'erreur
-      fallbackRouter.push(path);
-    }
+    // Navigation normale
+    navigate(path);
   };
 
   const projetRef = useRef(null);
