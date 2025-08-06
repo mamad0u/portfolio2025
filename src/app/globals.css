@@ -87,11 +87,22 @@ main {
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100svh;
+  height: 100dvh; /* Dynamic viewport height - s'adapte automatiquement */
   transform-origin: center top;
   pointer-events: none;
   z-index: 2;
   background-color: #171616;
+  /* Améliorations pour mobile */
+  min-height: 100vh; /* Fallback */
+  /* Optimisation pour éviter les saccades */
+  will-change: transform;
+}
+
+/* Support pour les navigateurs qui ne supportent pas dvh */
+@supports not (height: 100dvh) {
+  .revealer {
+    height: 100vh;
+  }
 }
 
 ::view-transition-old(root),
