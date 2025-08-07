@@ -45,7 +45,7 @@ const Projet = ({ bgColor }) => {
         },
       ],
       {
-        duration: 500,
+        duration: 1250,
         easing: "cubic-bezier(0.9, 0, 0.1, 1)",
         pseudoElement: "::view-transition-new(root)",
       }
@@ -59,55 +59,8 @@ const Projet = ({ bgColor }) => {
       return;
     }
 
-    // Sur mobile, utiliser directement le fallback avec overlay
-    if (isMobile) {
-      // Créer un overlay pour l'animation de transition (même visuel que le Header)
-      const overlay = document.createElement('div');
-      overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #000;
-        z-index: 9999;
-        clip-path: polygon(25% 75%, 75% 75%, 75% 75%, 25% 75%);
-        pointer-events: none;
-      `;
-      document.body.appendChild(overlay);
-
-      // Naviguer immédiatement
-      fallbackRouter.push(path);
-
-      // Animer l'overlay avec exactement les mêmes paramètres que le Header
-      gsap.to(overlay, {
-        clipPath: "polygon(0% 100%, 100% 100%, 100% 0%, 0% 0%)",
-        duration: 0.8,
-        ease: "cubic-bezier(0.9, 0, 0.1, 1)",
-        onComplete: () => {
-          // Nettoyer l'overlay
-          if (overlay.parentNode) {
-            overlay.remove();
-          }
-        }
-      });
-      return;
-    }
-
-    // Sur desktop, utiliser le transition router comme le Header
-    try {
-      if (transitionRouter && typeof transitionRouter.push === 'function') {
-        transitionRouter.push(path, {
-          onTransitionReady: triggerPageTransition,
-        });
-      } else {
-        // Fallback vers le router standard
-        fallbackRouter.push(path);
-      }
-    } catch (error) {
-      // Fallback vers le router standard en cas d'erreur
-      fallbackRouter.push(path);
-    }
+    // Utiliser directement le router standard pour éviter les erreurs
+    fallbackRouter.push(path);
   };
 
   const projetRef = useRef(null);
@@ -519,22 +472,19 @@ const Projet = ({ bgColor }) => {
           onMouseMove={isMobile ? undefined : handleMouseMove}
           onMouseLeave={isMobile ? undefined : () => handleCardLeave(index)}
           onClick={(e) => {
-            // Sur mobile, navigation directe
-            if (isMobile) {
-              handleNavigation(`/projet/${projets[index].slug}`)(e);
-              return;
-            }
-            
-            // Sur desktop, vérifier que les animations sont initialisées
-            if (!animationsInitialized || !levitationAnimations[index]) {
-              return;
-            }
-            
-            // Arrêter l'animation de défilement avant la navigation
+            // Arrêter toutes les animations avant la navigation
             if (imageAnimationTimeline) {
               imageAnimationTimeline.kill();
               setImageAnimationTimeline(null);
             }
+            
+            // Arrêter les animations de lévitation
+            levitationAnimations.forEach(animation => {
+              if (animation) {
+                animation.kill();
+              }
+            });
+            
             handleNavigation(`/projet/${projets[index].slug}`)(e);
           }}
           style={{ cursor: 'pointer' }}
