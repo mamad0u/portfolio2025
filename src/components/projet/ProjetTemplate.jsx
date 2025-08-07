@@ -36,8 +36,6 @@ const ProjetTemplate = ({ projet }) => {
       const adjetiveSpans = titleRef.current?.querySelectorAll(`.${styles.adjetive} span`);
       
       if (adjetiveSpans && adjetiveSpans.length > 0) {
-        console.log('Adjectifs trouvés:', adjetiveSpans.length); // Debug
-        
         // Position initiale : cachés en bas
         gsap.set(adjetiveSpans, {
           y: "100%",
@@ -52,8 +50,6 @@ const ProjetTemplate = ({ projet }) => {
           ease: "power2.out",
           stagger: 0.1 // Délai entre chaque adjectif
         });
-      } else {
-        console.log('Aucun adjectif trouvé'); // Debug
       }
     };
 
@@ -62,8 +58,6 @@ const ProjetTemplate = ({ projet }) => {
       const contentElements = contentContainerRef.current?.querySelectorAll('p, button');
       
       if (contentElements && contentElements.length > 0) {
-        console.log('Éléments de contenu trouvés:', contentElements.length); // Debug
-        
         // Position initiale : cachés en bas
         gsap.set(contentElements, {
           y: "100%",
@@ -78,46 +72,38 @@ const ProjetTemplate = ({ projet }) => {
           ease: "power2.out",
           stagger: 0.05 // Délai entre chaque élément
         });
-      } else {
-        console.log('Aucun élément de contenu trouvé'); // Debug
       }
     };
 
-    // Animation overflowHiddenSlideUp pour le fullDescription au scroll
+    // Animation overflowHiddenSlideUp pour le fullDescription
     const animateFullDescription = () => {
       if (fullDescriptionRef.current) {
-        console.log('Animation fullDescription démarrée'); // Debug
-        
         // Position initiale : caché en bas
         gsap.set(fullDescriptionRef.current, {
           y: "100%",
           opacity: 0
         });
 
-        // Animation directe avec délai au lieu du ScrollTrigger
+        // Animation directe avec délai
         gsap.to(fullDescriptionRef.current, {
           y: 0,
           opacity: 1,
           duration: 1,
           ease: "power2.out",
-          delay: 2, // Délai de 2 secondes pour s'assurer que l'élément est visible
-          onComplete: () => console.log('Animation fullDescription terminée') // Debug
+          delay: 1.5 // Délai réduit pour mobile
         });
-      } else {
-        console.log('fullDescriptionRef.current est null'); // Debug
       }
     };
 
-    // Délai pour l'animation du titre
-    const timer1 = setTimeout(animateTitle, 1500);
-    // Délai pour l'animation du contenu (après le titre)
-    const timer2 = setTimeout(animateContent, 1600);
-    // Animation du fullDescription au scroll
-    animateFullDescription();
+    // Délais optimisés pour mobile
+    const timer1 = setTimeout(animateTitle, 800); // Délai réduit
+    const timer2 = setTimeout(animateContent, 900); // Délai réduit
+    const timer3 = setTimeout(animateFullDescription, 1200); // Délai réduit
 
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
+      clearTimeout(timer3);
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, [projet]);

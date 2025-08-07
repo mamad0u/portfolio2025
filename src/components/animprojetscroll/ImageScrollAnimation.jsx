@@ -33,24 +33,65 @@ const ImageScrollAnimation = ({
   }, []);
 
   useEffect(() => {
-    // Si on est sur mobile, pas d'animations - images en position statique
+    // Si on est sur mobile, animation d'apparition simple
     if (isMobile) {
-      // Position statique pour mobile
-      gsap.set(image1Ref.current, {
-        scale: 1,
-        y: 0,
-        rotation: 0,
-        x: "-50%",
-        opacity: 1
-      });
+      // Attendre que les éléments soient prêts
+      const initMobileAnimation = () => {
+        console.log('Tentative d\'animation mobile, éléments prêts:', !!image1Ref.current, !!image2Ref.current);
+        if (image1Ref.current && image2Ref.current) {
+          // Position initiale pour mobile - images hors écran
+          gsap.set(image1Ref.current, {
+            scale: 1,
+            y: 0,
+            rotation: 0,
+            x: "-100%", // Image 1 commence à gauche hors écran
+            opacity: 0
+          });
 
-      gsap.set(image2Ref.current, {
-        scale: 1,
-        y: 0,
-        rotation: 0,
-        x: "50%",
-        opacity: 1
-      });
+          gsap.set(image2Ref.current, {
+            scale: 1,
+            y: 0,
+            rotation: 0,
+            x: "100%", // Image 2 commence à droite hors écran
+            opacity: 0
+          });
+
+          // Animation d'apparition au scroll pour mobile
+          gsap.to(image1Ref.current, {
+            x: "-50%", // Position finale actuelle
+            opacity: 1,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top 80%", // Se lance quand le haut du container atteint 80% du viewport
+              end: "top 20%",
+              toggleActions: "play none none "
+            }
+          });
+
+          gsap.to(image2Ref.current, {
+            x: "50%", // Position finale actuelle
+            opacity: 1,
+            duration: 0.8,
+            ease: "power2.out",
+            delay: 0.2, // Délai légèrement plus long pour un effet en cascade
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top 80%", // Se lance quand le haut du container atteint 80% du viewport
+              end: "top 20%",
+              toggleActions: "play none none "
+            }
+          });
+        } else {
+          // Réessayer après un court délai si les éléments ne sont pas prêts
+          setTimeout(initMobileAnimation, 100);
+        }
+      };
+
+      // Démarrer l'animation après un délai pour s'assurer que tout est chargé
+      setTimeout(initMobileAnimation, 200);
+
       return;
     }
 
@@ -175,21 +216,48 @@ const ImageScrollAnimation = ({
       const currentIsMobile = window.innerWidth <= 768;
       
       if (currentIsMobile) {
-        // Position statique pour mobile
+        // Animation d'apparition au scroll pour mobile lors du resize
         gsap.set(image1Ref.current, {
           scale: 1,
           y: 0,
           rotation: 0,
-          x: "-50%",
-          opacity: 1
+          x: "-100%",
+          opacity: 0
         });
 
         gsap.set(image2Ref.current, {
           scale: 1,
           y: 0,
           rotation: 0,
+          x: "100%",
+          opacity: 0
+        });
+
+        gsap.to(image1Ref.current, {
+          x: "-50%",
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            end: "top 20%",
+            toggleActions: "play none none reverse"
+          }
+        });
+
+        gsap.to(image2Ref.current, {
           x: "50%",
-          opacity: 1
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          delay: 0.2,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            end: "top 20%",
+            toggleActions: "play none none reverse"
+          }
         });
       } else {
         // Réinitialiser les animations pour desktop
