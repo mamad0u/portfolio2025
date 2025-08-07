@@ -59,44 +59,37 @@ const Projet = ({ bgColor }) => {
       return;
     }
 
-    // Vérifier que le router est prêt
-    if (!isRouterReady) {
-      // Réessayer après un court délai
+    // Sur mobile, utiliser directement le router standard avec l'animation
+    if (isMobile) {
+      // Déclencher l'animation de transition
+      triggerPageTransition();
+      
+      // Naviguer après un court délai pour laisser l'animation se déclencher
       setTimeout(() => {
-        if (isRouterReady) {
-          // Utiliser une fonction anonyme pour éviter la récursion
-          const navigate = (targetPath) => {
-            try {
-              if (transitionRouter && typeof transitionRouter.push === 'function') {
-                transitionRouter.push(targetPath, {
-                  onTransitionReady: triggerPageTransition,
-                });
-              } else {
-                fallbackRouter.push(targetPath);
-              }
-            } catch (error) {
-              fallbackRouter.push(targetPath);
-            }
-          };
-          navigate(path);
-        }
+        fallbackRouter.push(path);
       }, 100);
       return;
     }
 
+    // Sur desktop, utiliser le transition router
     try {
-      // Essayer d'abord avec le transition router
       if (transitionRouter && typeof transitionRouter.push === 'function') {
         transitionRouter.push(path, {
-      onTransitionReady: triggerPageTransition,
-    });
+          onTransitionReady: triggerPageTransition,
+        });
       } else {
         // Fallback vers le router standard
-        fallbackRouter.push(path);
+        triggerPageTransition();
+        setTimeout(() => {
+          fallbackRouter.push(path);
+        }, 100);
       }
     } catch (error) {
       // Fallback vers le router standard en cas d'erreur
-      fallbackRouter.push(path);
+      triggerPageTransition();
+      setTimeout(() => {
+        fallbackRouter.push(path);
+      }, 100);
     }
   };
 
@@ -116,7 +109,6 @@ const Projet = ({ bgColor }) => {
   const [isHovering, setIsHovering] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageAnimationTimeline, setImageAnimationTimeline] = useState(null);
-  const [isRouterReady, setIsRouterReady] = useState(false);
   const [animationsInitialized, setAnimationsInitialized] = useState(false);
   const scrollTriggersRef = useRef([]);
 
@@ -373,37 +365,16 @@ const Projet = ({ bgColor }) => {
     });
   };
 
-  // Vérifier que le router est prêt
-  useEffect(() => {
-    const checkRouterReady = () => {
-      const isReady = (transitionRouter && typeof transitionRouter.push === 'function') || 
-                     (fallbackRouter && typeof fallbackRouter.push === 'function');
-      setIsRouterReady(isReady);
-    };
 
-    // Vérifier immédiatement
-    checkRouterReady();
-
-    // Vérifier à nouveau après un court délai pour s'assurer que le router est initialisé
-    const timer = setTimeout(checkRouterReady, 100);
-    
-    // Vérifier une troisième fois après un délai plus long pour s'assurer que tout est bien initialisé
-    const longTimer = setTimeout(checkRouterReady, 500);
-
-    return () => {
-      clearTimeout(timer);
-      clearTimeout(longTimer);
-    };
-  }, [transitionRouter, fallbackRouter]);
 
   useEffect(() => {
-    // Ne pas initialiser les animations sur mobile
+    // Sur mobile, marquer les animations comme initialisées immédiatement
     if (isMobile) {
       setAnimationsInitialized(true);
       return;
     }
 
-    // Attendre que les éléments DOM soient prêts
+    // Sur desktop, initialiser les animations de lévitation
     const initializeAnimations = () => {
       // Vérifier que tous les éléments DOM sont prêts
       const allCardsReady = cardRefs.every(ref => ref.current);
@@ -531,13 +502,13 @@ const Projet = ({ bgColor }) => {
           onMouseMove={isMobile ? undefined : handleMouseMove}
           onMouseLeave={isMobile ? undefined : () => handleCardLeave(index)}
           onClick={(e) => {
-            // Sur mobile, pas besoin de vérifier les animations
+            // Sur mobile, navigation directe
             if (isMobile) {
               handleNavigation(`/projet/${projets[index].slug}`)(e);
               return;
             }
             
-            // Vérifier que les animations sont initialisées (desktop uniquement)
+            // Sur desktop, vérifier que les animations sont initialisées
             if (!animationsInitialized || !levitationAnimations[index]) {
               return;
             }

@@ -219,5 +219,12 @@
     display: inline-block;
     white-space: nowrap;
   }
-
+  .legal {
+    font-size: 1.5vw;
+    width: 100%;
+    display: flex;
+    padding: 0 2vw;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
