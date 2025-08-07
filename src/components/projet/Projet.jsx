@@ -45,7 +45,7 @@ const Projet = ({ bgColor }) => {
         },
       ],
       {
-        duration: 1250,
+        duration: 500,
         easing: "cubic-bezier(0.9, 0, 0.1, 1)",
         pseudoElement: "::view-transition-new(root)",
       }
@@ -59,19 +59,42 @@ const Projet = ({ bgColor }) => {
       return;
     }
 
-    // Sur mobile, utiliser directement le router standard avec l'animation
+    // Sur mobile, utiliser directement le fallback avec overlay
     if (isMobile) {
-      // Déclencher l'animation de transition
-      triggerPageTransition();
-      
-      // Naviguer après un court délai pour laisser l'animation se déclencher
-      setTimeout(() => {
-        fallbackRouter.push(path);
-      }, 100);
+      // Créer un overlay pour l'animation de transition (même visuel que le Header)
+      const overlay = document.createElement('div');
+      overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        clip-path: polygon(25% 75%, 75% 75%, 75% 75%, 25% 75%);
+        pointer-events: none;
+      `;
+      document.body.appendChild(overlay);
+
+      // Naviguer immédiatement
+      fallbackRouter.push(path);
+
+      // Animer l'overlay avec exactement les mêmes paramètres que le Header
+      gsap.to(overlay, {
+        clipPath: "polygon(0% 100%, 100% 100%, 100% 0%, 0% 0%)",
+        duration: 0.8,
+        ease: "cubic-bezier(0.9, 0, 0.1, 1)",
+        onComplete: () => {
+          // Nettoyer l'overlay
+          if (overlay.parentNode) {
+            overlay.remove();
+          }
+        }
+      });
       return;
     }
 
-    // Sur desktop, utiliser le transition router
+    // Sur desktop, utiliser le transition router comme le Header
     try {
       if (transitionRouter && typeof transitionRouter.push === 'function') {
         transitionRouter.push(path, {
@@ -79,17 +102,11 @@ const Projet = ({ bgColor }) => {
         });
       } else {
         // Fallback vers le router standard
-        triggerPageTransition();
-        setTimeout(() => {
-          fallbackRouter.push(path);
-        }, 100);
+        fallbackRouter.push(path);
       }
     } catch (error) {
       // Fallback vers le router standard en cas d'erreur
-      triggerPageTransition();
-      setTimeout(() => {
-        fallbackRouter.push(path);
-      }, 100);
+      fallbackRouter.push(path);
     }
   };
 
